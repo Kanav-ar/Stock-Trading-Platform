@@ -3,7 +3,7 @@ import Education from "../components/home/Education/Education";
 import Hero from "../components/home/Hero/Hero";
 import Pricing from "../components/home/Pricing/Index";
 import Stats from "../components/home/Stats/Index";
-import Section from "../components/layout/Section";
+import Section from "../components/layout/section/Section";
 
 export default function Home() {
   return (

@@ -1,6 +1,7 @@
-import logo from "../../assets/logo.svg";
+import logo from "../../../assets/logo.svg";
 import { Menu, Moon, Sun } from "lucide-react";
-import useTheme from "../../context/Theme/themeContext";
+import useTheme from "../../../context/Theme/themeContext";
+import { Link, NavLink } from "react-router";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -8,27 +9,27 @@ export default function Navbar() {
     <>
       <nav className="w-full z-50 sticky top-0 bg-white flex items-center lg:px-12 md:px-10 min-h-20 shadow-md dark:shadow-white dark:shadow-2xs dark:bg-gray-950 transition-all duration-1000">
         <div className="flex-2 px-4 md:px-8 lg:px-16 xl:px-32">
-          <img src={logo} alt="logo" className="w-32.25" />
+          <Link to={"/"}> <img src={logo} alt="logo" className="w-32.25" /></Link>
         </div>
         <div
           id="nav-tags"
           className="flex flex-1 justify-center space-x-10 dark:text-white text-gray-800 lg:flex hidden "
         >
-          <a href="" className="hover:text-blue-500 cursor-pointer">
+          <NavLink to="/signup" className="hover:text-blue-500 cursor-pointer">
             Signup
-          </a>
-          <a href="" className="hover:text-blue-500 cursor-pointer">
+          </NavLink>
+          <NavLink to="/about" className="hover:text-blue-500 cursor-pointer">
             About 
-          </a>
-          <a href="" className="hover:text-blue-500 cursor-pointer">
+          </NavLink>
+          <NavLink to="/products" className="hover:text-blue-500 cursor-pointer">
             Products
-          </a>
-          <a href="" className="hover:text-blue-500 cursor-pointer">
+          </NavLink>
+          <NavLink to="/pricing" className="hover:text-blue-500 cursor-pointer">
             Pricing
-          </a>
-          <a href="" className="hover:text-blue-500 cursor-pointer">
+          </NavLink>
+          <NavLink to="/support" className="hover:text-blue-500 cursor-pointer">
             Support
-          </a>
+          </NavLink>
         </div>
 
         <div className="flex items-center md:space-x-8 lg:space-x-10 space-x-4 lg:px-12 px-4">
