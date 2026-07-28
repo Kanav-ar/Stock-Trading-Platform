@@ -57,7 +57,7 @@ export const quickLinks = [
 
 export default function Footer() {
   return (
-    <div className="text-gray-500 bg-gray-100 dark:bg-gray-950 py-8 space-y-8">
+    <div className="text-gray-500 bg-gray-100 dark:bg-gray-950 py-8 space-y-8 transition-all duration-1000">
       <div className="flex md:flex-row flex-col md:gap-8 xl:gap-32 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex-1 flex flex-col gap-8">
           <img className="w-50" src={logo} alt="zerodha logo" />
