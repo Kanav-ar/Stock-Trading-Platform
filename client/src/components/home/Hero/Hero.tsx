@@ -9,11 +9,23 @@ export default function Hero() {
     <>
       <div className="flex flex-col items-center">
         <div className="max-w-7xl">
-          <img
-            src={theme === "dark" ? darkModeHero : homeHero}
-            alt="Home hero"
-            className="w-full max-w-3xl rounded-2xl"
-          />
+          <div className="relative max-w-3xl">
+            <img
+              src={homeHero}
+              alt="Home hero"
+              className={`absolute inset-0 w-full rounded-2xl transition-opacity duration-1000 ${
+                theme === "light" ? "opacity-100" : "opacity-0"
+              }`}
+            />
+
+            <img
+              src={darkModeHero}
+              alt="Home hero"
+              className={`w-full rounded-2xl transition-opacity duration-1000 ${
+                theme === "dark" ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-8 items-center px-4 pt-8">
           <h1 className="font-semibold text-3xl">Invest in everything</h1>

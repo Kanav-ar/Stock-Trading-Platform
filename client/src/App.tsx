@@ -1,9 +1,11 @@
+import { RouterProvider } from "react-router"
 import Playground from "./pages/playground"
+import { router } from "./router/Router"
 
 function App() {
   return (
     <>
-      <Playground/> 
+      <RouterProvider router={router}/>
     </>
   )
 }
