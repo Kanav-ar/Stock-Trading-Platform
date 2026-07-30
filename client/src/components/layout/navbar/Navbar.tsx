@@ -15,21 +15,60 @@ export default function Navbar() {
           id="nav-tags"
           className="flex flex-1 justify-center space-x-10 dark:text-white text-gray-800 lg:flex hidden "
         >
-          <NavLink to="/signup" className="hover:text-blue-500 cursor-pointer">
-            Signup
-          </NavLink>
-          <NavLink to="/about" className="hover:text-blue-500 cursor-pointer">
-            About 
-          </NavLink>
-          <NavLink to="/products" className="hover:text-blue-500 cursor-pointer">
-            Products
-          </NavLink>
-          <NavLink to="/pricing" className="hover:text-blue-500 cursor-pointer">
-            Pricing
-          </NavLink>
-          <NavLink to="/support" className="hover:text-blue-500 cursor-pointer">
-            Support
-          </NavLink>
+         <NavLink
+  to="/signup"
+  className={({ isActive }) =>
+    `cursor-pointer hover:text-blue-500 ${
+      isActive ? "text-blue-500 font-semibold" : ""
+    }`
+  }
+>
+  Signup
+</NavLink>
+
+<NavLink
+  to="/about"
+  className={({ isActive }) =>
+    `cursor-pointer hover:text-blue-500 ${
+      isActive ? "text-blue-500 font-semibold" : ""
+    }`
+  }
+>
+  About
+</NavLink>
+
+<NavLink
+  to="/products"
+  className={({ isActive }) =>
+    `cursor-pointer hover:text-blue-500 ${
+      isActive ? "text-blue-500 font-semibold" : ""
+    }`
+  }
+>
+  Products
+</NavLink>
+
+<NavLink
+  to="/pricing"
+  className={({ isActive }) =>
+    `cursor-pointer hover:text-blue-500 ${
+      isActive ? "text-blue-500 font-semibold" : ""
+    }`
+  }
+>
+  Pricing
+</NavLink>
+
+<NavLink
+  to="/support"
+  className={({ isActive }) =>
+    `cursor-pointer hover:text-blue-500 ${
+      isActive ? "text-blue-500 font-semibold" : ""
+    }`
+  }
+>
+  Support
+</NavLink>
         </div>
 
         <div className="flex items-center md:space-x-8 lg:space-x-10 space-x-4 lg:px-12 px-4">
