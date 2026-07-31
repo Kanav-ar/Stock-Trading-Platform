@@ -17,19 +17,7 @@ export default function Hero() {
           repeatType: "mirror",
           ease: "easeInOut",
         }}
-        className="
-    absolute
-    top-24 md:top-28 lg:top-30
-    left-1/2
-    -z-10
-    h-48 w-48
-    sm:h-56 sm:w-56
-    md:h-64 md:w-64
-    lg:h-72 lg:w-72
-    -translate-x-1/2
-    rounded-full
-    bg-blue-500/10
-    blur-3xl
+        className="absolute top-24 md:top-28 lg:top-30 left-1/2 -z-10 h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 lg:h-72 lg:w-72 -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl
   "
       />
 
@@ -40,7 +28,7 @@ export default function Hero() {
           Built with curiosity.
         </Heading>
 
-        <Underline/>
+        <Underline />
 
         <motion.p
           initial={{

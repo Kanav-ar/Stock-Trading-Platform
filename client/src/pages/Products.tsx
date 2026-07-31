@@ -4,12 +4,19 @@ import LeftImgCard from "../components/products/cards/LeftImgCard";
 import Partners from "../components/products/partners/Partners";
 import RightImgCard from "../components/products/cards/RightImgCard";
 import KiteImg from "../assets/kite.png";
+import KiteImgDm from "../assets/kite-dm.png";
 import CoinImg from "../assets/coin.png";
+// import CoinImgDm from "../assets/coin-dm.png";
 import VarsityImg from "../assets/varsity.png";
+// import VarsityImg from "../assets/varsity-dm.png";
 import ConsoleImg from "../assets/console.png";
+// import ConsoleImg from "../assets/console-dm.png";
 import KiteApiImg from "../assets/kiteconnect.png";
+// import KiteApiImg from "../assets/kiteconnect-dm.png";
+import useTheme from "../context/Theme/themeContext";
 
 export default function Products() {
+  const {theme} = useTheme();
   return (
     <>
       <Section>
@@ -22,7 +29,7 @@ export default function Products() {
         <LeftImgCard
           heading="Kite"
           text="Our ultra-fast flagship trading platform with streaming market data, advanced charts, an elegant UI, and more. Enjoy the Kite experience seamlessly on your Android and iOS devices."
-          img={KiteImg}
+          img={theme === "light"? KiteImg:KiteImgDm}
           btn={[
             { text: "Try demo", link: "" },
             { text: "Learn more", link: "" },

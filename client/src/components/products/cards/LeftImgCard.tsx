@@ -26,7 +26,7 @@ export default function LeftImgCard({ img, heading, text, btn, storeLinks }: Lef
     <>
       <div className="flex flex-col lg:flex-row gap-16 lg:gap-12 justify-around ">
         <div className=" flex justify-center">
-          <img src={img} alt="Image" />
+          <img className="max-w-xl" src={img} alt="Image" />
         </div>
         <div className=" flex flex-col justify-center gap-8">
           <HeadingProducts heading={heading} />
