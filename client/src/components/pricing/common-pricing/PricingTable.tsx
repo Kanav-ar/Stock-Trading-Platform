@@ -25,7 +25,7 @@ export default function PricingTable({ data, className }: PricingTableProps) {
             {data.headers.map((header) => (
               <th
                 key={header}
-                className=" px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300"
+                className="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300"
               >
                 {header}
               </th>
@@ -39,15 +39,15 @@ export default function PricingTable({ data, className }: PricingTableProps) {
               key={row.title}
               className="border-b border-gray-300 dark:border-gray-700"
             >
-              <td className=" px-6 py-5  font-medium text-gray-700 dark:text-gray-200">
+              <td className="px-6 py-5  font-medium text-gray-700 dark:text-gray-200">
                 {row.title}
               </td>
 
               {row.cells.map((cell, index) => (
-                <td key={index} className="px-6 py-5 ">
+                <td key={index} className="px-6 py-5">
                   {Array.isArray(cell)
                     ? cell.map((line) => (
-                        <p key={line} className="leading-7 last:mb-0 mb-1">
+                        <p key={line} className="leading-7  last:mb-0 mb-1">
                           {line}
                         </p>
                       ))

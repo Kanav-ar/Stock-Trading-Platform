@@ -15,7 +15,7 @@ export default function Section({ children, className = "" }: SectionProps) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.25 }}
-      className={`py-16 text-gray-700 dark:text-gray-100 ${className}`}
+      className={`py-16 text-gray-600 dark:text-gray-100 ${className}`}
     >
       <Container>{children}</Container>
     </motion.section>
