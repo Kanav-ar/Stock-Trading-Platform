@@ -1,7 +1,8 @@
-import AboutMe from "../components/about/AboutMe";
-import Hero from "../components/about/Hero";
-import Story from "../components/about/Story";
-import TechStack from "../components/about/TechStack";
+import AboutMe from "../components/about/aboutMe/AboutMe";
+import ContactMe from "../components/about/contactMe/ContactMe";
+import Hero from "../components/about/hero/Hero";
+import Story from "../components/about/story/Story";
+import TechStack from "../components/about/techStack/TechStack";
 import Section from "../components/layout/section/Section";
 
 export default function About() {
@@ -14,13 +15,13 @@ export default function About() {
         <Story />
       </Section>
       <Section>
+        <AboutMe />
+      </Section>
+      <Section>
         <TechStack />
       </Section>
       <Section>
-        <AboutMe />
-      </Section>
-      <Section>
-        <AboutMe />
+        <ContactMe />
       </Section>
     </>
   );

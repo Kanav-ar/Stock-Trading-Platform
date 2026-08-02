@@ -1,5 +1,5 @@
 import ArrowLink from "../../common/ArrowLink";
-import HeadingProducts from "../common-products/Heading-products";
+import Heading from "../common/Heading";
 
 type Button = {
   text: string;
@@ -20,7 +20,7 @@ export default function RightImgCard({ img, heading, text, btn }: RightImg) {
           <img src={img} alt="Image" />
         </div>
         <div className=" flex flex-col justify-center gap-8">
-          <HeadingProducts heading={heading} />
+          <Heading heading={heading} />
           <p className="lg:max-w-xs">{text}</p>
           <div className="flex gap-4">
             {btn?.map((el) => (

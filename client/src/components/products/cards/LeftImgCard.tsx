@@ -1,6 +1,6 @@
 import type React from "react";
 import ArrowLink from "../../common/ArrowLink";
-import HeadingProducts from "../common-products/Heading-products";
+import Heading from "../common/Heading";
 import StoreIcons from "../../common/StoreIcons";
 
 
@@ -29,7 +29,7 @@ export default function LeftImgCard({ img, heading, text, btn, storeLinks }: Lef
           <img className="max-w-xl" src={img} alt="Image" />
         </div>
         <div className=" flex flex-col justify-center gap-8">
-          <HeadingProducts heading={heading} />
+          <Heading heading={heading} />
           <p className="lg:max-w-xs">{text}</p>
           <div className="flex gap-4">
             {btn?.map((el) => (

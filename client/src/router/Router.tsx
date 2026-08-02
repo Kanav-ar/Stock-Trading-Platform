@@ -9,10 +9,10 @@ import Products from "../pages/Products";
 import Signup from "../pages/Signup";
 import Support from "../pages/Support";
 import NotFound from "../pages/NotFound";
-import EquityTable from "../components/pricing/dynamicTables-pricing/EquityTable";
-import CurrencyTable from "../components/pricing/dynamicTables-pricing/CurrencyTable";
-import CommodityTable from "../components/pricing/dynamicTables-pricing/CommodityTable";
-import FandOTable from "../components/pricing/dynamicTables-pricing/F&O";
+import EquityTable from "../components/pricing/dynamicTables/EquityTable";
+import CurrencyTable from "../components/pricing/dynamicTables/CurrencyTable";
+import CommodityTable from "../components/pricing/dynamicTables/CommodityTable";
+import FandOTable from "../components/pricing/dynamicTables/F&O";
 
 export const router = createBrowserRouter([
   {

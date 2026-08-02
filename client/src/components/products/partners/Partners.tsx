@@ -1,4 +1,4 @@
-import HeadingProducts from "../common-products/Heading-products";
+import HeadingProducts from "../common/Heading";
 import PartnerIcon from "./PartnerIcons";
 import ZerodhaFundHouseImg from "../../../assets/zerodhaFundhouse.png";
 import ZerodhaFundHouseImgDm from "../../../assets/zerodhafundhouse-dm.png";
