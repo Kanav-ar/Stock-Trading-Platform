@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 
 import MainLayout from "../layouts/MainLayout";
 
@@ -9,6 +9,10 @@ import Products from "../pages/Products";
 import Signup from "../pages/Signup";
 import Support from "../pages/Support";
 import NotFound from "../pages/NotFound";
+import EquityTable from "../components/pricing/dynamicTables/EquityTable";
+import CurrencyTable from "../components/pricing/dynamicTables/CurrencyTable";
+import CommodityTable from "../components/pricing/dynamicTables/CommodityTable";
+import FandOTable from "../components/pricing/dynamicTables/F&O";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +30,28 @@ export const router = createBrowserRouter([
       {
         path: "pricing",
         element: <Pricing />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="equities" replace />,
+          },
+          {
+            path: "equities",
+            element: <EquityTable />,
+          },
+          {
+            path: "F&O",
+            element: <FandOTable />,
+          },
+          {
+            path: "currency",
+            element: <CurrencyTable />,
+          },
+          {
+            path: "commodity",
+            element: <CommodityTable />,
+          },
+        ],
       },
       {
         path: "products",
@@ -35,10 +61,9 @@ export const router = createBrowserRouter([
         path: "support",
         element: <Support />,
       },
-     
     ],
   },
-   {
+  {
     path: "/signup",
     element: <Signup />,
   },

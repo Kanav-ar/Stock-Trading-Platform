@@ -11,12 +11,19 @@ export default function Paragraph({
 }: ParagraphProps) {
   return (
     <motion.p
-      variants={{
-        hidden: { opacity: 0, y: 25 },
-        show: { opacity: 1, y: 0 },
+      initial={{
+        opacity: 0,
+        y: 30,
       }}
-      transition={{ duration: 0.6 }}
-      className={className}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        delay: 0.4,
+        duration: 0.8,
+      }}
+      className={`mx-auto mt-10 max-w-4xl text-lg leading-8 text-center ${className}`}
     >
       {children}
     </motion.p>

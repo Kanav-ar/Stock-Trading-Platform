@@ -1,9 +1,8 @@
 import { motion } from "motion/react";
 type UnderlineProps = {
   width?: string;
-  color?: string;
 };
-export default function Underline({width = "90px",color = "blue"}:UnderlineProps) {
+export default function Underline({width = "90px"}:UnderlineProps) {
   return (
     <>
      <motion.div
@@ -13,7 +12,7 @@ export default function Underline({width = "90px",color = "blue"}:UnderlineProps
             duration: 0.8,
             delay: 0.3,
           }}
-          className={`mx-auto mt-7 h-1 rounded-full bg-${color}-600`}
+          className={`mx-auto mt-7 h-1 rounded-full bg-blue-600`}
         />
     </>
   );

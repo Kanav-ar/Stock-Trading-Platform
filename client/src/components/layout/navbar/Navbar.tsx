@@ -19,7 +19,7 @@ export default function Navbar() {
   to="/signup"
   className={({ isActive }) =>
     `cursor-pointer hover:text-blue-500 ${
-      isActive ? "text-blue-500 font-semibold" : ""
+      isActive ? "text-[#387ed1] font-semibold" : ""
     }`
   }
 >
@@ -29,8 +29,8 @@ export default function Navbar() {
 <NavLink
   to="/about"
   className={({ isActive }) =>
-    `cursor-pointer hover:text-blue-500 ${
-      isActive ? "text-blue-500 font-semibold" : ""
+    `cursor-pointer hover:text-[#387ed1] ${
+      isActive ? "text-[#387ed1] font-semibold" : ""
     }`
   }
 >
@@ -40,8 +40,8 @@ export default function Navbar() {
 <NavLink
   to="/products"
   className={({ isActive }) =>
-    `cursor-pointer hover:text-blue-500 ${
-      isActive ? "text-blue-500 font-semibold" : ""
+    `cursor-pointer hover:text-[#387ed1] ${
+      isActive ? "text-[#387ed1] font-semibold" : ""
     }`
   }
 >
@@ -51,8 +51,8 @@ export default function Navbar() {
 <NavLink
   to="/pricing"
   className={({ isActive }) =>
-    `cursor-pointer hover:text-blue-500 ${
-      isActive ? "text-blue-500 font-semibold" : ""
+    `cursor-pointer hover:text-[#387ed1] ${
+      isActive ? "text-[#387ed1] font-semibold" : ""
     }`
   }
 >
@@ -62,8 +62,8 @@ export default function Navbar() {
 <NavLink
   to="/support"
   className={({ isActive }) =>
-    `cursor-pointer hover:text-blue-500 ${
-      isActive ? "text-blue-500 font-semibold" : ""
+    `cursor-pointer hover:text-[#387ed1] ${
+      isActive ? "text-[#387ed1] font-semibold" : ""
     }`
   }
 >
