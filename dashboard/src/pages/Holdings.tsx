@@ -1,8 +1,10 @@
+import { holdings } from "../data/data.ts";
+
 const Holdings = () => {
   return (
     <>
       <h3 className="mb-2 text-[1.3rem] font-light text-gray-700 dark:text-gray-200">
-        Holdings (13)
+        Holdings ({holdings.length})
       </h3>
 
       <div className="overflow-x-auto">
@@ -43,7 +45,55 @@ const Holdings = () => {
             </tr>
           </thead>
 
-          <tbody>{/*  rows */}</tbody>
+          <tbody className="text-gray-800 dark:text-gray-300">
+            {holdings.map((stock, index) => {
+              const curVal = stock.price * stock.qty;
+              const isProfit = curVal - stock.avg * stock.qty >= 0.0;
+
+              const profClass = isProfit
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400";
+
+              const dayClass = stock.isLoss
+                ? "text-red-600 dark:text-red-400"
+                : "text-green-600 dark:text-green-400";
+
+              return (
+                <tr
+                  key={index}
+                  className="border-b border-gray-100 dark:border-gray-800"
+                >
+                  <td className="border-r border-gray-200 px-3 py-4 text-left dark:border-gray-700">
+                    {stock.name}
+                  </td>
+
+                  <td className="px-3 py-4 text-right">{stock.qty}</td>
+
+                  <td className="px-3 py-4 text-right">
+                    {stock.avg.toFixed(2)}
+                  </td>
+
+                  <td className="border-r border-gray-200 px-3 py-4 text-right dark:border-gray-700">
+                    {stock.price.toFixed(2)}
+                  </td>
+
+                  <td className="px-3 py-4 text-right">{curVal.toFixed(2)}</td>
+
+                  <td className={`px-3 py-4 text-right ${profClass}`}>
+                    {(curVal - stock.avg * stock.qty).toFixed(2)}
+                  </td>
+
+                  <td className={`px-3 py-4 text-right ${profClass}`}>
+                    {stock.net}
+                  </td>
+
+                  <td className={`px-3 py-4 text-right ${dayClass}`}>
+                    {stock.day}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       </div>
 

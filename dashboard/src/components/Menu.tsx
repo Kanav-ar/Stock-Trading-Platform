@@ -2,7 +2,6 @@ import { NavLink } from "react-router";
 import { Moon, Sun } from "lucide-react";
 import kiteLogoImg from "../assets/kitelogo.png";
 import useTheme from "../context/Theme/themeContext";
-import { useState } from "react";
 
 const menuItems = [
   "Dashboard",
@@ -31,7 +30,7 @@ export default function Menu() {
                     `text-[0.8rem] font-normal transition-colors duration-150 ${
                       isActive
                         ? "text-[#f56834]"
-                        : "text-[#464646] hover:text-[#f56834]"
+                        : "text-[#464646] dark:text-white hover:text-[#f56834]"
                     }`
                   }
                 >
@@ -48,7 +47,7 @@ export default function Menu() {
               ZU
             </div>
 
-            <p className="text-[0.8rem] font-light text-[#464646] transition-colors group-hover:text-[#df5b2b]">
+            <p className="text-[0.8rem] font-light text-[#464646] dark:text-white transition-colors group-hover:text-[#df5b2b]">
               USERID
             </p>
           </div>
