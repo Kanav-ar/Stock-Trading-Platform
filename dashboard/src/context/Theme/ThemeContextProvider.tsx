@@ -8,11 +8,9 @@ const getInitialTheme = (): "light" | "dark" => {
     return savedTheme;
   }
 
-  const prefersDark = window.matchMedia(
-  "(prefers-color-scheme: dark)"
-).matches;
-
-return prefersDark ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 };
 
 export default function ThemeContextProvider({
@@ -24,7 +22,7 @@ export default function ThemeContextProvider({
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(theme);
-
+  
     localStorage.setItem("theme", theme);
   }, [theme]);
   function toggleTheme() {
@@ -35,4 +33,4 @@ export default function ThemeContextProvider({
       {children}
     </ThemeContext.Provider>
   );
-}
+} 

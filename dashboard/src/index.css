@@ -8,9 +8,5 @@
 
 body {
   @apply bg-white dark:bg-[#070d17] transition-colors duration-1000;
-
 }
 
-body {
-  font-weight: 400;
-}
