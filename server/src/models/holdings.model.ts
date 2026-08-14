@@ -30,6 +30,9 @@ const holdingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isLoss:{
+    type:Boolean
+  }
 });
 
 export const Holding = mongoose.model("Holding", holdingSchema);

@@ -1,13 +1,8 @@
-import {
-  ArrowDown,
-  ArrowUp,
-  BarChart,
-  MoreHorizontal,
-  
-} from "lucide-react";
+import { ArrowDown, ArrowUp, BarChart, MoreHorizontal } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { watchlist } from "../data/data";
-import type React from "react";
+import useBuyWindow from "../context/Sidebar/BuyWindowContext";
+
 const WatchList = () => {
   return (
     <div className=" hidden lg:block lg:basis-[32%] h-viewport overflow-y-auto border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-[#070d17] dark:shadow-none transition-colors duration-200">
@@ -54,6 +49,7 @@ interface WatchListItemProps {
 }
 
 function WatchListItem({ name, price, percent, isDown }: WatchListItemProps) {
+  const { openBuyWindow } = useBuyWindow();
   return (
     <li className=" relative border-b-[1px] border-gray-200 px-4 py-3 dark:border-gray-800 hover:cursor-move hover:bg-[#f3f3f3] dark:hover:bg-[#111827] group ">
       <div className=" relative flex items-center justify-between text-[0.8rem] font-light">
@@ -99,55 +95,57 @@ function WatchListItem({ name, price, percent, isDown }: WatchListItemProps) {
           </div>
         </div>
 
-        <div className="absolute hidden items-center right-0 justify-end opacity-90 group-hover:flex">
-          <WatchListActions
-            btn={"B"}
-            tooltipTitle="Buy"
-            className="border-[#4184f3] bg-[#4184f3] text-[0.8rem] font-normal text-white"
-          />
-          <WatchListActions
-            btn={"S"}
-            tooltipTitle="Sell"
-            className="border-[#ff5722] bg-[#ff5722] text-[0.8rem] font-normal text-white"
-          />
-          <WatchListActions
-            btn={
-              <BarChart className="scale-[0.7] text-[rgb(65,65,65)] dark:text-gray-300" />
-            }
-            tooltipTitle="Analytics"
-            className="border-[#9b9b9b] bg-white hover:bg-[#d4d4d4] dark:bg-gray-800 dark:hover:bg-gray-700"
-          />
-          <WatchListActions
-            btn={
-              <MoreHorizontal className="scale-[0.7] text-[rgb(65,65,65)] dark:text-gray-300" />
-            }
-            tooltipTitle="More"
-            className="border-[#9b9b9b] bg-white hover:bg-[#d4d4d4] dark:bg-gray-800 dark:hover:bg-gray-700"
-          />
-        </div>
+        <WatchListActions BuyFn={() => openBuyWindow(name, price)} />
       </div>
     </li>
   );
 }
 
-function WatchListActions({
-  btn,
-  tooltipTitle,
-  className,
-}: {
-  btn: React.ReactNode | string;
-  tooltipTitle: string;
-  className?: string;
-}) {
+function WatchListActions({ BuyFn }: { BuyFn: () => void }) {
   return (
-    <span>
-      <Tooltip title={tooltipTitle} placement="top" arrow>
-        <button
-          className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#9b9b9b] ${className}`}
-        >
-          {btn}
-        </button>
-      </Tooltip>
-    </span>
+    <>
+      <div className="absolute hidden items-center right-0 justify-end opacity-90 group-hover:flex">
+        <span>
+          <Tooltip title="Buy" placement="top" arrow>
+            <button
+              onClick={BuyFn}
+              className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#4184f3] bg-[#4184f3] text-[0.8rem] font-normal text-white`}
+            >
+              B
+            </button>
+          </Tooltip>
+        </span>
+
+        <span>
+          <Tooltip title="Sell" placement="top" arrow>
+            <button
+              className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#ff5722] bg-[#ff5722] text-[0.8rem] font-normal text-white `}
+            >
+              S
+            </button>
+          </Tooltip>
+        </span>
+
+        <span>
+          <Tooltip title="Analytics" placement="top" arrow>
+            <button
+              className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#9b9b9b] bg-white hover:bg-[#d4d4d4] dark:bg-gray-800 dark:hover:bg-gray-700 `}
+            >
+              <BarChart className="scale-[0.7] text-[rgb(65,65,65)] dark:text-gray-300" />
+            </button>
+          </Tooltip>
+        </span>
+
+        <span>
+          <Tooltip title="More" placement="top" arrow>
+            <button
+              className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#9b9b9b] bg-white hover:bg-[#d4d4d4] dark:bg-gray-800 dark:hover:bg-gray-700 `}
+            >
+              <MoreHorizontal className="scale-[0.7] text-[rgb(65,65,65)] dark:text-gray-300" />
+            </button>
+          </Tooltip>
+        </span>
+      </div>
+    </>
   );
 }

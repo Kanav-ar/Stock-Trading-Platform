@@ -1,10 +1,60 @@
-import { holdings } from "../data/data.ts";
-
+import { useEffect, useState } from "react";
+type Holding = {
+  name: string;
+  qty: number;
+  avg: number;
+  price: number;
+  net: string;
+  day: string;
+  isLoss?: string;
+};
 const Holdings = () => {
+  const [allHoldings, setAllHoldings] = useState<Holding[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/holdings");
+      const data = await response.json();
+
+      setAllHoldings(data.data);
+    })();
+  }, []);
+
+  const totalInvestment = allHoldings.reduce(
+    (total, holding) => total + holding.avg * holding.qty,
+    0,
+  );
+
+  const [investmentWhole, investmentDecimal] = totalInvestment
+    .toFixed(2)
+    .split(".");
+
+  const currentValue = allHoldings.reduce(
+    (total, holding) => total + holding.price * holding.qty,
+    0,
+  );
+
+  const [currentValueWhole, currentValueDecimal] = currentValue
+    .toFixed(2)
+    .split(".");
+
+  const totalPnL = currentValue - totalInvestment;
+
+  const pnlPercentage =
+    totalInvestment > 0 ? (totalPnL / totalInvestment) * 100 : 0;
+
+  const isProfit = totalPnL >= 0;
+
+  const pnlClass = isProfit
+    ? "text-green-500 dark:text-green-400"
+    : "text-red-500 dark:text-red-400";
+
+  const pnlSign = isProfit ? "+" : "";
+
   return (
     <>
       <h3 className="mb-2 text-[1.3rem] font-light text-gray-700 dark:text-gray-200">
-        Holdings ({holdings.length})
+        Holdings ({allHoldings.length})
       </h3>
 
       <div className="overflow-x-auto">
@@ -46,7 +96,7 @@ const Holdings = () => {
           </thead>
 
           <tbody className="text-gray-800 dark:text-gray-300">
-            {holdings.map((stock, index) => {
+            {allHoldings.map((stock, index) => {
               const curVal = stock.price * stock.qty;
               const isProfit = curVal - stock.avg * stock.qty >= 0.0;
 
@@ -100,8 +150,8 @@ const Holdings = () => {
       <div className="mt-[5%] flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <div className="w-full md:basis-1/3">
           <h5 className="text-[1.8rem] font-light text-gray-700 dark:text-gray-200">
-            29,875.
-            <span className="text-sm font-light">55</span>
+            {investmentWhole}.
+            <span className="text-sm font-light">{investmentDecimal}</span>
           </h5>
 
           <p className="mt-[2%] text-sm font-light text-gray-400 dark:text-gray-500">
@@ -111,8 +161,8 @@ const Holdings = () => {
 
         <div className="w-full md:basis-1/3">
           <h5 className="text-[1.8rem] font-light text-gray-700 dark:text-gray-200">
-            31,428.
-            <span className="text-sm font-light">95</span>
+            {currentValueWhole}.
+            <span className="text-sm font-light">{currentValueDecimal}</span>
           </h5>
 
           <p className="mt-[2%] text-sm font-light text-gray-400 dark:text-gray-500">
@@ -121,8 +171,10 @@ const Holdings = () => {
         </div>
 
         <div className="w-full md:basis-1/3">
-          <h5 className="text-[1.8rem] font-light text-green-500 dark:text-green-400">
-            1,553.40 (+5.20%)
+          <h5 className={`text-[1.8rem] font-light ${pnlClass}`}>
+            {pnlSign}
+            {totalPnL.toFixed(2)} ({pnlSign}
+            {pnlPercentage.toFixed(2)}%)
           </h5>
 
           <p className="mt-[2%] text-sm font-light text-gray-400 dark:text-gray-500">
