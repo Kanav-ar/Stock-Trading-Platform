@@ -8,13 +8,12 @@ import OptionalServicesTable from "../components/pricing/staticTables/OptionalSe
 import Charges from "../components/pricing/chargesExplained/Charges";
 import Hero from "../components/pricing/hero/Hero";
 
-
 export default function Pricing() {
   return (
     <>
-    <Section>
-      <Hero/>
-    </Section>
+      <Section>
+        <Hero />
+      </Section>
       <Section>
         <Cards />
       </Section>
