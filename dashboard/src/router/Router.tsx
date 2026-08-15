@@ -8,6 +8,7 @@ import Holdings from "../pages/Holdings";
 import Positions from "../pages/Positions";
 import Funds from "../pages/Funds";
 import Apps from "../pages/Apps";
+import NotFound from "../pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -43,5 +44,9 @@ export const router = createBrowserRouter([
         element: <Apps />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

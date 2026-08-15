@@ -31,7 +31,7 @@ app.get(
   wrapAsync(async (req, res) => {
     const Postions = await Position.find({});
 
-    return res 
+    return res
       .status(200)
       .json(
         new ApiResponse(200, Postions, "All Holdings fetched successfully!"),
@@ -39,8 +39,23 @@ app.get(
   }),
 );
 
+app.get(
+  "/api/orders",
+  wrapAsync(async (req, res) => {
+    const allOrders = await Order.find({});
+
+    if (allOrders.length == 0) {
+      throw new ApiError(404, "No orders found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, allOrders, "All orders fetched successfully"));
+  }),
+);
+
 app.post(
-  "/api/order",
+  "/api/orders/buy",
   wrapAsync(async (req, res) => {
     const newOrder = new Order({
       name: req.body.name,
