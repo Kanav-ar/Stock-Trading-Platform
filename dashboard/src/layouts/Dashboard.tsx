@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import WatchList from "../components/WatchList";
 import TopBar from "../components/TopBar";
-import BuyWindowContextProvider from "../context/Sidebar/BuyWindowContextProvider";
+import BuyWindowContextProvider from "../context/Order/OrderContextProvider";
 
 export default function DashboardLayout() {
   return (

@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp, BarChart, MoreHorizontal } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { watchlist } from "../data/data";
-import useBuyWindow from "../context/Sidebar/BuyWindowContext";
+import useOrderWindow from "../context/Order/OrderContext";
 
 const WatchList = () => {
   return (
@@ -22,18 +22,16 @@ const WatchList = () => {
         </span>
       </div>
 
-      <ul className="pb-20">
-        <ul className="flex-1 overflow-y-auto pb-20">
-          {watchlist.map((stock) => (
-            <WatchListItem
-              key={stock.name}
-              name={stock.name}
-              price={stock.price}
-              percent={stock.percent}
-              isDown={stock.isDown}
-            />
-          ))}
-        </ul>
+      <ul className="flex-1 overflow-y-auto pb-20">
+        {watchlist.map((stock) => (
+          <WatchListItem
+            key={stock.name}
+            name={stock.name}
+            price={stock.price}
+            percent={stock.percent}
+            isDown={stock.isDown}
+          />
+        ))}
       </ul>
     </div>
   );
@@ -49,12 +47,12 @@ interface WatchListItemProps {
 }
 
 function WatchListItem({ name, price, percent, isDown }: WatchListItemProps) {
-  const { openBuyWindow } = useBuyWindow();
+  const { openOrderWindow } = useOrderWindow();
   return (
-    <li className=" relative border-b-[1px] border-gray-200 px-4 py-3 dark:border-gray-800 hover:cursor-move hover:bg-[#f3f3f3] dark:hover:bg-[#111827] group ">
-      <div className=" relative flex items-center justify-between text-[0.8rem] font-light">
-        <div className="flex gap-6 xl:gap-8 w-full justify-between items-center ">
-          <span className=" mr-2 flex-1 text-[rgb(141,141,141)] dark:text-gray-400">
+    <li className="relative border-b-[1px] border-gray-200 px-4 py-3 dark:border-gray-800 hover:cursor-move hover:bg-[#f3f3f3] dark:hover:bg-[#111827] group ">
+      <div className="relative flex items-center justify-between text-[0.8rem] font-light">
+        <div className="flex justify-between items-center gap-6 xl:gap-8 w-full">
+          <span className="mr-2 flex-1 text-[rgb(141, 141, 141)] dark:text-gray-400">
             {name}
           </span>
 
@@ -95,13 +93,22 @@ function WatchListItem({ name, price, percent, isDown }: WatchListItemProps) {
           </div>
         </div>
 
-        <WatchListActions BuyFn={() => openBuyWindow(name, price)} />
+        <WatchListActions
+          BuyFn={() => openOrderWindow({uid:name, price:price, mode:"BUY"})}
+          SellFn={() => openOrderWindow({uid:name, price:price, mode:"SELL"})}
+        />
       </div>
     </li>
   );
 }
 
-function WatchListActions({ BuyFn }: { BuyFn: () => void }) {
+function WatchListActions({
+  BuyFn,
+  SellFn,
+}: {
+  BuyFn: () => void;
+  SellFn: () => void;
+}) {
   return (
     <>
       <div className="absolute hidden items-center right-0 justify-end opacity-90 group-hover:flex">
@@ -119,6 +126,7 @@ function WatchListActions({ BuyFn }: { BuyFn: () => void }) {
         <span>
           <Tooltip title="Sell" placement="top" arrow>
             <button
+              onClick={SellFn}
               className={` mr-2 flex h-[30px] w-10 cursor-pointer items-center justify-center rounded border-[0.7px] border-[#ff5722] bg-[#ff5722] text-[0.8rem] font-normal text-white `}
             >
               S
