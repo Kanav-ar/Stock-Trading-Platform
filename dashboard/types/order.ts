@@ -5,3 +5,11 @@ export interface OrderDetails {
   price: number;
   mode: OrderMode;
 }
+
+export interface Order {
+  _id: string;
+  name: string;
+  qty: number;
+  price: number;
+  mode: "BUY" | "SELL";
+}

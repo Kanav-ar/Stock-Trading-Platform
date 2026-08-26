@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { OrderWindowContext } from "./OrderContext";
+import { OrderWindowContext } from "./OrderWindowContext";
 import OrderWindow from "../../components/OrderWindow";
 import type { OrderDetails } from "../../../types/order";
 

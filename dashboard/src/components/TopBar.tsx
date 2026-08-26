@@ -27,7 +27,7 @@ const TopBar = () => {
           <p className="text-[0.8rem] font-normal text-[#929292]">+0.31%</p>
         </div>
       </div>
-
+      
       <Menu />
     </header>
   );
