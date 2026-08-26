@@ -1,5 +1,6 @@
 import { useState } from "react";
-import type { OrderDetails } from "../../types/order"
+import type { OrderDetails } from "../../types/order";
+import { useOrders } from "../context/Order/OrderContext";
 
 interface OrderActionWindowProps extends OrderDetails {
   onClose: () => void;
@@ -20,44 +21,42 @@ export default function OrderWindow({
     price: price,
     quantity: 1,
   });
-  function handleOrderClick() {
-    if (mode.toUpperCase() === "BUY") {
-      return async function handleBuyClick() {
-        const response = await fetch("/api/orders/buy", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: uid,
-            qty: stockDetails.quantity,
-            price: stockDetails.price,
-            mode: "BUY",
-          }),
-        });
-        const data = await response.json();
-        console.log(data);
-        onClose();
-      };
-    } else if (mode.toUpperCase() === "SELL") {
-      return async function handleSellClick() {
-        const response = await fetch("/api/orders/sell", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: uid,
-            qty: stockDetails.quantity,
-            price: stockDetails.price,
-            mode: "SELL",
-          }),
-        });
-        const data = await response.json();
-        console.log(data);
-        onClose();
-      };
-    }
+
+  const { addOrder } = useOrders();
+  async function handleBuyClick() {
+    const response = await fetch("/api/orders/buy", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: uid,
+        qty: stockDetails.quantity,
+        price: stockDetails.price,
+        mode: "BUY",
+      }),
+    });
+    const data = await response.json();
+    addOrder(data.data);
+    onClose();
+  }
+
+  async function handleSellClick() {
+    const response = await fetch("/api/orders/sell", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: uid,
+        qty: stockDetails.quantity,
+        price: stockDetails.price,
+        mode: "SELL",
+      }),
+    });
+    const data = await response.json();
+    addOrder(data.data);
+    onClose();
   }
 
   return (
@@ -65,7 +64,7 @@ export default function OrderWindow({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {(mode.toUpperCase() === "BUY") ? <>BUY</> : <>SELL</>}
+            {mode === "BUY" ? <>BUY</> : <>SELL</>}
           </p>
 
           <h2 className="text-xl font-semibold dark:text-white">{uid}</h2>
@@ -103,12 +102,21 @@ export default function OrderWindow({
         }
       />
 
-      <button
-        className="mt-6 w-full rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700"
-        onClick={handleOrderClick}
-      >
-        Buy
-      </button>
+      {mode === "BUY" ? (
+        <button
+          className="mt-6 w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:cursor-pointer hover:bg-blue-800"
+          onClick={handleBuyClick}
+        >
+          BUY
+        </button>
+      ) : (
+        <button
+          className="mt-6 w-full rounded-lg bg-orange-600 py-3 font-medium text-white transition hover:cursor-pointer hover:bg-orange-800"
+          onClick={handleSellClick}
+        >
+          SELL
+        </button>
+      )}
     </div>
   );
 }

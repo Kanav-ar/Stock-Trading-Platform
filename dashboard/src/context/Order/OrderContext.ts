@@ -1,20 +1,26 @@
 import { createContext, useContext } from "react";
-import type { OrderDetails } from "../../../types/order";
 
-interface OrderWindowContextType {
-  openOrderWindow: (order: OrderDetails) => void;
-  closeOrderWindow: () => void;
+interface Order {
+  _id: string;
+  name: string;
+  qty: number;
+  price: number;
+  mode: "BUY" | "SELL";
 }
 
-export const OrderWindowContext = createContext<OrderWindowContextType | undefined>(undefined);
+interface OrderContextType {
+  allOrders: Order[];
+  addOrder: (order: Order) => void;
+}
+export const OrderContext = createContext<OrderContextType | undefined>(
+  undefined,
+);
 
-export default function useOrderWindow() {
-  const context = useContext(OrderWindowContext);
+export function useOrders() {
+  const context = useContext(OrderContext);
 
   if (!context) {
-    throw new Error(
-      "useOrderWindow must be used inside OrderWindowContextProvider",
-    );
+    throw new Error("useOrders must be used inside OrderContextProvider");
   }
 
   return context;

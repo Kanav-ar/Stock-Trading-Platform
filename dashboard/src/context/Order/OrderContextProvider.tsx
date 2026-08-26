@@ -1,48 +1,31 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { OrderWindowContext } from "./OrderContext";
-import OrderWindow from "../../components/OrderWindow";
-import type { OrderDetails } from "../../../types/order";
+import type React from "react";
+import { OrderContext } from "./OrderContext";
+import { useEffect, useState } from "react";
+import type { Order } from "../../pages/Orders";
 
-interface OrderWindowContextProviderProps {
-  children: ReactNode;
+interface OrderContextProviderProps {
+  children: React.ReactNode;
 }
 
-export default function BuyWindowContextProvider({
+export default function OrderContextProvider({
   children,
-}: OrderWindowContextProviderProps) {
-  const [selectedStockDetails, setSelectedStockDetails] =
-    useState<OrderDetails | null>(null);
+}: OrderContextProviderProps) {
+  const [allOrders, setAllOrders] = useState<Order[]>([]);
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/orders");
+      const data = await response.json();
 
-  function openOrderWindow(order: OrderDetails) {
-    setSelectedStockDetails(order);
+      setAllOrders(data.data);
+    })();
+  }, []);
+
+  function addOrder(order: Order) {
+    setAllOrders((prev) => ([ ...prev, order ]));
   }
-
-  function closeOrderWindow() {
-    setSelectedStockDetails(null);
-  }
-
   return (
-    <OrderWindowContext.Provider
-      value={{
-        openOrderWindow,
-        closeOrderWindow,
-      }}
-    >
+    <OrderContext.Provider value={{ allOrders, addOrder }}>
       {children}
-      {/* when there is an order, only then render the order window */}
-      {selectedStockDetails && (
-        <>
-          <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]" />
-
-          <OrderWindow
-            uid={selectedStockDetails.uid}
-            price={selectedStockDetails.price}
-            mode={selectedStockDetails.mode}
-            onClose={closeOrderWindow}
-          />
-        </>
-      )}
-    </OrderWindowContext.Provider>
+    </OrderContext.Provider>
   );
 }
