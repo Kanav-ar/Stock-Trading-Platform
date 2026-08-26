@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
 import { useOrderStore } from "../store/orderStore";
+import { api } from "../api/axios";
 
 export default function Orders() {
   const allOrders = useOrderStore((state) => state.allOrders);
@@ -8,10 +9,10 @@ export default function Orders() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch("/api/orders");
-      const data = await response.json();
-      console.log(data);
-      setOrders(data.data);
+      const response = await api("/orders");
+      
+      console.log(response.data);
+      setOrders(response.data.data);
     })();
   }, [setOrders]);
 

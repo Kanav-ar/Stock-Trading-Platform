@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { OrderDetails } from "../../types/order";
 import { useOrderStore } from "../store/orderStore";
-
+import { api } from "../api/axios";
 
 interface OrderActionWindowProps extends OrderDetails {
   onClose: () => void;
@@ -23,42 +23,29 @@ export default function OrderWindow({
     quantity: 1,
   });
 
-
-  const addOrder = useOrderStore((state) => (state.addOrder));
+  const addOrder = useOrderStore((state) => state.addOrder);
 
   async function handleBuyClick() {
-    const response = await fetch("/api/orders/buy", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: uid,
-        qty: stockDetails.quantity,
-        price: stockDetails.price,
-        mode: "BUY",
-      }),
+    const response = await api.post("/orders/buy", {
+      name: uid,
+      qty: stockDetails.quantity,
+      price: stockDetails.price,
+      mode: "BUY",
     });
-    const data = await response.json();
-    addOrder(data.data)
+
+    addOrder(response.data.data);
     onClose();
   }
 
   async function handleSellClick() {
-    const response = await fetch("/api/orders/sell", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: uid,
-        qty: stockDetails.quantity,
-        price: stockDetails.price,
-        mode: "SELL",
-      }),
+   const response = await api.post("/orders/sell", {
+      name: uid,
+      qty: stockDetails.quantity,
+      price: stockDetails.price,
+      mode: "SELL",
     });
-    const data = await response.json();
-    addOrder(data.data)
+
+    addOrder(response.data.data);
     onClose();
   }
 

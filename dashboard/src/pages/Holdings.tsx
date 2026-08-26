@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { api } from "../api/axios";
 type Holding = {
   name: string;
   qty: number;
@@ -13,10 +14,9 @@ const Holdings = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch("/api/holdings");
-      const data = await response.json();
+      const response = await api("/holdings");
 
-      setAllHoldings(data.data);
+      setAllHoldings(response.data.data);
     })();
   }, []);
 

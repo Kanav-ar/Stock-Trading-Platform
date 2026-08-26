@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { api } from "../api/axios";
 type Position = {
-  product:string;
+  product: string;
   name: string;
   qty: number;
   avg: number;
@@ -9,19 +10,18 @@ type Position = {
   day: string;
   isLoss?: string;
 };
-const Positions = () => {
+export default function Positions() {
   const [allPositions, setAllPositions] = useState<Position[]>([]);
 
   useEffect(() => {
     (async () => {
-      const response = await fetch("/api/positions");
-      const data = await response.json();
-      setAllPositions(data.data);
+      const response = await api("/positions");
+
+      setAllPositions(response.data.data);
     })();
   }, []);
 
-
-    const totalInvestment = allPositions.reduce(
+  const totalInvestment = allPositions.reduce(
     (total, holding) => total + holding.avg * holding.qty,
     0,
   );
@@ -177,6 +177,4 @@ const Positions = () => {
       </div>
     </>
   );
-};
-
-export default Positions;
+}
