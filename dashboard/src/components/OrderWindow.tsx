@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { OrderDetails } from "../../types/order";
-import { useOrders } from "../context/Order/OrderContext";
+import { useOrderStore } from "../store/orderStore";
+
 
 interface OrderActionWindowProps extends OrderDetails {
   onClose: () => void;
@@ -22,7 +23,9 @@ export default function OrderWindow({
     quantity: 1,
   });
 
-  const { addOrder } = useOrders();
+
+  const addOrder = useOrderStore((state) => (state.addOrder));
+
   async function handleBuyClick() {
     const response = await fetch("/api/orders/buy", {
       method: "POST",
@@ -37,7 +40,7 @@ export default function OrderWindow({
       }),
     });
     const data = await response.json();
-    addOrder(data.data);
+    addOrder(data.data)
     onClose();
   }
 
@@ -55,7 +58,7 @@ export default function OrderWindow({
       }),
     });
     const data = await response.json();
-    addOrder(data.data);
+    addOrder(data.data)
     onClose();
   }
 

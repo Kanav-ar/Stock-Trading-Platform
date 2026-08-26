@@ -1,18 +1,22 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
-import { useOrders } from "../context/Order/OrderContext";
+import { useOrderStore } from "../store/orderStore";
 
-export interface Order {
-  _id: string;
-  name: string;
-  qty: number;
-  price: number;
-  mode: "BUY" | "SELL";
-}
+export default function Orders() {
+  const allOrders = useOrderStore((state) => state.allOrders);
+  const setOrders = useOrderStore((state) => state.setAllOrders);
 
-export default function Orders () {
-  const { allOrders } = useOrders();
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/orders");
+      const data = await response.json();
+      console.log(data);
+      setOrders(data.data);
+    })();
+  }, [setOrders]);
+
   return (
-    <div className="px-4 py-8">
+    <div className="px-4 py-2">
       {allOrders.length === 0 ? (
         <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
           <p className="mb-6 max-w-md text-lg font-light text-gray-500 dark:text-gray-400">
@@ -28,6 +32,9 @@ export default function Orders () {
         </div>
       ) : (
         <div className="overflow-x-auto">
+          <div className="pb-4 text-gray-600 text-xl dark:text-gray-200">
+            Orders ({allOrders.length})
+          </div>
           <table className="w-full min-w-[700px] border-collapse">
             <thead>
               <tr className="border-y border-gray-200 dark:border-gray-700">
@@ -84,5 +91,4 @@ export default function Orders () {
       )}
     </div>
   );
-};
-
+}
