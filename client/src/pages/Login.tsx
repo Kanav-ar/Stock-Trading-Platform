@@ -1,138 +1,108 @@
-import { BiLeftArrowAlt } from "react-icons/bi";
+import React, { useState } from "react";
 import { Link } from "react-router";
-import ThemeBtn from "../components/common/ThemeBtn";
+import { api } from "../api/axios";
+import PasswordInput from "../components/signupAndLogin/PasswordInput";
+import Input from "../components/signupAndLogin/SignupInput";
+import AuthCard from "../components/signupAndLogin/AuthCard";
+import AuthHeader from "../components/signupAndLogin/AuthHeader";
+import axios from "axios";
+import {X } from "lucide-react";
 
-export default function Login() {
+
+export default function Signup() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    identifier: "",
+    password: "",
+  });
+
+  function handleFormData(e: React.ChangeEvent<HTMLInputElement>) {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function submitFormData(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+     await api.post("/users/login", formData);
+    
+      setFormData({ identifier: "", password: "" });
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message ?? "Something went wrong");
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <>
-      <section className="min-h-screen bg-gray-50 dark:bg-[#070d17]">
-        <div className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-8">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-[#387ed1]">Zerodha</h1>
+    <section className="min-h-screen bg-gray-50 dark:bg-[#070d17]">
+      <div className="flex flex-col lg:flex-row min-h-screen px-6 py-8 justify-around gap-4">
+        <AuthHeader />
 
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Start your investing journey
-            </p>
-          </div>
+        <div className="flex flex-col items-center justify-center ">
+          <AuthCard
+            title="Welcome Back"
+            description="Enter your details to get started."
+          >
+            <form className="mt-6 space-y-4" onSubmit={submitFormData}>
+              {error && (
+                <p className="text-red-400 flex items-center gap-2">
+                  {error}{" "}
+                  <button type="button" className="hover:bg-gray-500/30 cursor-pointer rounded-full"
+                    onClick={() => {
+                      setError(null);
+                    }}
+                  >
+                    <X />
+                  </button>{" "}
+                </p>
+              )}
+              <Input
+                label="Username or Email"
+                name="identifier"
+                type="text"
+                placeholder="Enter Username or Email"
+                value={formData.identifier}
+                onChange={handleFormData}
+              />
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-[#0d1522]">
-            <div className="flex px-6 pt-6 justify-between">
-              <Link to={"/"}>
-                <BiLeftArrowAlt className="text-3xl hover:cursor-pointer  transition-transform duration-300 ease-in-out hover:scale-105   dark:text-white" />
+              <PasswordInput
+                value={formData.password}
+                onChange={handleFormData}
+              />
+
+              <button
+                type="submit"
+                className="w-full mt-8 rounded-lg bg-[#387ed1] px-5 py-2.5 text-sm font-medium text-white cursor-pointer transition hover:bg-[#2f6fb9] focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
+                disabled={loading}
+              >
+                {loading ? "Loggin you in..." : "Login"}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+              Don't have an account?{" "}
+              <Link
+                to={"/signup"}
+                className="font-medium text-[#387ed1] hover:underline"
+              >
+                Signup
               </Link>
-              <ThemeBtn />
-            </div>
-            <div className="p-6 sm:p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Create your account
-              </h2>
-
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                Enter your details to get started.
-              </p>
-
-              <form className="mt-6 space-y-4">
-                <div>
-                  <label
-                    htmlFor="username"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-200"
-                  >
-                    Username
-                  </label>
-
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Choose a username"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none transition focus:border-[#387ed1] focus:ring-1 focus:ring-[#387ed1] dark:border-gray-700 dark:bg-[#111c2b] dark:text-white dark:placeholder-gray-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-200"
-                  >
-                    Email
-                  </label>
-
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none transition focus:border-[#387ed1] focus:ring-1 focus:ring-[#387ed1] dark:border-gray-700 dark:bg-[#111c2b] dark:text-white dark:placeholder-gray-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-200"
-                  >
-                    Password
-                  </label>
-
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="••••••••"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none transition focus:border-[#387ed1] focus:ring-1 focus:ring-[#387ed1] dark:border-gray-700 dark:bg-[#111c2b] dark:text-white dark:placeholder-gray-500"
-                    required
-                  />
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <input
-                    id="terms"
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-[#387ed1] focus:ring-[#387ed1]"
-                    required
-                  />
-
-                  <label
-                    htmlFor="terms"
-                    className="text-sm text-gray-500 dark:text-gray-400"
-                  >
-                    I agree to the{" "}
-                    <a
-                      href="#"
-                      className="font-medium text-[#387ed1] hover:underline"
-                    >
-                      Terms and Conditions
-                    </a>
-                  </label>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-[#387ed1] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#2f6fb9] focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
-                >
-                  Create account
-                </button>
-              </form>
-
-              <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                Already have an account?{" "}
-                <Link
-                  to={"login"}
-                  className="font-medium text-[#387ed1] hover:underline"
-                >
-                  Login
-                </Link>
-              </p>
-            </div>
-          </div>
+            </p>
+          </AuthCard>
 
           <p className="mt-6 text-center text-xs text-gray-400">
             This is a learning project inspired by Zerodha.
           </p>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
