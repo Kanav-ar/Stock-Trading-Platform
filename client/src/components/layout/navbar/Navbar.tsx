@@ -1,12 +1,11 @@
 import logo from "../../../assets/logo.svg";
-import { Menu, Moon, Sun } from "lucide-react";
-import useTheme from "../../../context/Theme/themeContext";
+import { Menu } from "lucide-react";
 import { Link, NavLink } from "react-router";
+import ThemeBtn from "../../common/ThemeBtn";
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
   return (
-    <>
+  
       <nav className="w-full z-50 sticky top-0 bg-white flex items-center lg:px-12 md:px-10 min-h-20 shadow-md dark:shadow-white dark:shadow-2xs dark:bg-gray-950 transition-all duration-1000">
         <div className="flex-2 px-4 md:px-8 lg:px-16 xl:px-32">
           <Link to={"/"}>
@@ -76,19 +75,9 @@ export default function Navbar() {
 
         <div className="flex items-center md:space-x-8 lg:space-x-10 space-x-4 lg:px-12 px-4">
           <Menu className=" dark:text-white" />
-          <button
-            className="p-2 rounded-full cursor-pointer hover:bg-gray-950/20 dark:text-white dark:hover:bg-white/20"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun strokeWidth={2.5} />
-            ) : (
-              <Moon strokeWidth={2.5} />
-            )}
-          </button>
+          <ThemeBtn/>
         </div>
       </nav>
-    </>
+    
   );
 }
