@@ -37,7 +37,7 @@ export default function Stats() {
             alt="ecosystem"    
           />
           <div className="flex gap-4 lg:gap-8">
-            <ArrowLink tag="Explore our products" link={""} />
+            <ArrowLink tag="Explore our products" link={"/products"} />
             <ArrowLink tag="Try kite demo" link={""} />
           </div>
         </div>

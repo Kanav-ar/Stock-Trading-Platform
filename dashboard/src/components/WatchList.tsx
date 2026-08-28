@@ -2,8 +2,20 @@ import { ArrowDown, ArrowUp, BarChart, MoreHorizontal } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { watchlist } from "../data/data";
 import useOrderWindow from "../context/Order/OrderWindowContext";
+import { useEffect } from "react";
+import { api } from "../api/axios";
 
 const WatchList = () => {
+
+  useEffect(() => {
+    (async() => {
+      const data = await api("/watchlist")
+
+      console.log("frontend\n",data)
+    })()
+  },[])
+
+
   return (
     <div className=" hidden lg:block lg:basis-[32%] h-viewport overflow-y-auto border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-[#070d17] dark:shadow-none transition-colors duration-200">
       <div className="relative flex items-center">
