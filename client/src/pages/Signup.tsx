@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import { api } from "../api/axios";
 import PasswordInput from "../components/signupAndLogin/PasswordInput";
-import Input from "../components/signupAndLogin/SignupInput";
+import Input from "../components/signupAndLogin/Input";
 import TermsCheckbox from "../components/signupAndLogin/TermsCheckbox";
 import AuthCard from "../components/signupAndLogin/AuthCard";
 import AuthHeader from "../components/signupAndLogin/AuthHeader";

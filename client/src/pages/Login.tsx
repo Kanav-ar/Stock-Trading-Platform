@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import { api } from "../api/axios";
 import PasswordInput from "../components/signupAndLogin/PasswordInput";
-import Input from "../components/signupAndLogin/SignupInput";
+import Input from "../components/signupAndLogin/Input";
 import AuthCard from "../components/signupAndLogin/AuthCard";
 import AuthHeader from "../components/signupAndLogin/AuthHeader";
 import axios from "axios";
@@ -53,9 +53,10 @@ export default function Signup() {
           >
             <form className="mt-6 space-y-4" onSubmit={submitFormData}>
               {error && (
-                <p className="text-red-400 flex items-center gap-2">
+                <p className="text-red-500 flex items-center gap-6">
                   {error}{" "}
-                  <button type="button" className="hover:bg-gray-500/30 cursor-pointer rounded-full"
+                  
+                  <button type="button" className="hover:bg-red-500/30 cursor-pointer rounded-lg"
                     onClick={() => {
                       setError(null);
                     }}
