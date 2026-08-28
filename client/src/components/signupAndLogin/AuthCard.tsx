@@ -20,6 +20,8 @@ export default function AuthCard({
         <Link to={"/"}>
           <BiLeftArrowAlt className="text-3xl hover:cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105   dark:text-white" />
         </Link>
+
+
         <ThemeBtn />
       </div>
       <div className="p-6 sm:p-8">

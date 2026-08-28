@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import { api } from "../api/axios";
 import PasswordInput from "../components/signupAndLogin/PasswordInput";
-import Input from "../components/signupAndLogin/SignupInput";
+import Input from "../components/signupAndLogin/Input";
 import TermsCheckbox from "../components/signupAndLogin/TermsCheckbox";
 import AuthCard from "../components/signupAndLogin/AuthCard";
 import AuthHeader from "../components/signupAndLogin/AuthHeader";
-import { api } from "../api/axios";
 import axios from "axios";
+import { X } from "lucide-react";
 
 export default function Signup() {
   const [terms, setTerms] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string|null>("");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -25,6 +26,7 @@ export default function Signup() {
   async function submitFormData(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
       const response = await api.post("/users/signup", formData);
@@ -34,19 +36,19 @@ export default function Signup() {
       }
       setFormData({ username: "", email: "", password: "" });
     } catch (err) {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message ?? "Something went wrong");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message ?? "Something went wrong");
+      } else {
+        setError("Something went wrong");
       }
     } finally {
       setLoading(false);
     }
-
-    setFormData({ username: "", email: "", password: "" });
   }
 
   return (
     <section className="min-h-screen bg-gray-50 dark:bg-[#070d17]">
-      {error && <p className="text-red-500">{error}</p>}
+      
       <div className="flex flex-col lg:flex-row min-h-screen px-6 py-8 justify-around gap-4">
         <AuthHeader />
 
@@ -57,12 +59,23 @@ export default function Signup() {
           >
             <form
               className="mt-6 space-y-4"
-              onSubmit={(e) => {
-                submitFormData(e);
-              }}
+              onSubmit={submitFormData}
             >
+              {error && (
+                <p className="text-red-400 flex items-center gap-2">
+                  {error}{" "}
+                  <button type="button" className="hover:bg-gray-500/30 cursor-pointer rounded-full"
+                    onClick={() => {
+                      setError(null);
+                    }}
+                  >
+                    <X />
+                  </button>{" "}
+                </p>
+              )}
               <Input
                 label="Username"
+                name="username"
                 type="text"
                 placeholder="Choose a username"
                 value={formData.username}
@@ -70,6 +83,7 @@ export default function Signup() {
               />
               <Input
                 label="Email"
+                name="email"
                 type="email"
                 placeholder="you@example.com"
                 value={formData.email}
