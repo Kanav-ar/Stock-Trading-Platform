@@ -1,18 +1,35 @@
-import express from "express";
+import express, {
+  type ErrorRequestHandler,
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import cookieParser from "cookie-parser";
-import { Holding } from "./models/holdings.model.ts";
-import { Position } from "./models/positions.model.ts";
-import { Order } from "./models/orders.model.ts";
+import cors from "cors";
 import ApiError from "./utils/ApiError.ts";
 import ApiResponse from "./utils/ApiResponse.ts";
 import WrapAsync from "./utils/WrapAsync.ts";
+import { Holding } from "./models/holdings.model.ts";
+import { Position } from "./models/positions.model.ts";
+import { Order } from "./models/orders.model.ts";
 
 const app = express();
 
 app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: Bun.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+import healthCheckRouter from "./routes/healthcheck.routes.ts";
+
+app.use("/api/healthcheck", healthCheckRouter);
 
 app.get(
   "/api/holdings",
@@ -98,9 +115,33 @@ app.get(
         "X-API-Key": process.env.WATCHLIST_API_KEY,
       },
     });
-  const allStocks = await response.json();
-  console.log(allStocks);
-  return res.status(200).json(new ApiResponse(200,allStocks.data, "All stocks data fetched successfully"))
+    const allStocks = await response.json();
+    console.log(allStocks);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          allStocks.data,
+          "All stocks data fetched successfully",
+        ),
+      );
   }),
 );
+
+app.use(
+  (
+    err: ErrorRequestHandler,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  },
+);
+
 export default app;
