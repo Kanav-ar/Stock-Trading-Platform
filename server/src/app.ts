@@ -9,7 +9,6 @@ import cors from "cors";
 import ApiError from "./utils/ApiError.ts";
 import ApiResponse from "./utils/ApiResponse.ts";
 import WrapAsync from "./utils/WrapAsync.ts";
-import { Holding } from "./models/holdings.model.ts";
 import { Position } from "./models/positions.model.ts";
 import { Order } from "./models/orders.model.ts";
 
@@ -20,7 +19,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: Bun.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -28,21 +27,12 @@ app.use(
 );
 
 import healthCheckRouter from "./routes/healthcheck.routes.ts";
+import userRouter from "./routes/user.routes.ts";
+import holdingRouter from "./routes/holding.routes.ts";
 
-app.use("/api/healthcheck", healthCheckRouter);
-
-app.get(
-  "/api/holdings",
-  WrapAsync(async (_, res) => {
-    const Holdings = await Holding.find({});
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, Holdings, "All Holdings fetched successfully!"),
-      );
-  }),
-);
+app.use("/api/v1/healthcheck", healthCheckRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/holdings", holdingRouter);
 
 app.get(
   "/api/positions",

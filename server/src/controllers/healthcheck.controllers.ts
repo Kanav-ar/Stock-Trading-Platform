@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
 
