@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const loginValidationSchema = z
+export const loginValidationSchema = z
   .object({
     username: z
       .string()

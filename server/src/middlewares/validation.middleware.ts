@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import type { ZodSchema } from "zod/v3";
 import ApiError from "../utils/ApiError";
+import z from "zod";
 
-export const validateUser = (schema: ZodSchema) => {
+export const validateUser = (schema: z.ZodType) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const isValid = schema.safeParse(req.body);
 
