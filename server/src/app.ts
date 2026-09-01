@@ -1,5 +1,4 @@
 import express, {
-  type ErrorRequestHandler,
   type NextFunction,
   type Request,
   type Response,
@@ -121,15 +120,27 @@ app.get(
 
 app.use(
   (
-    err: ErrorRequestHandler,
+    err: Error,
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
-    console.error(err);
+    if (err instanceof ApiError) {
+      return res.status(err.statusCode).json({
+        statusCode: err.statusCode,
+        data: err.data,
+        success: err.success,
+        message: err.message,
+        errors: err.errors,
+      });
+    }
 
-    res.status(500).json({
-      message: "Something went wrong",
+    return res.status(500).json({
+      statusCode: 500,
+      data: null,
+      success: false,
+      message: "Something went wrong!",
+      errors: [],
     });
   },
 );

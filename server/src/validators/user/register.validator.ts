@@ -1,4 +1,4 @@
-import { z } from "zod";
+import z from "zod";
 
 export const registerValidationSchema = z.object({
   username: z.string().trim().min(3, "Username must be at least 3 characters").toLowerCase(),

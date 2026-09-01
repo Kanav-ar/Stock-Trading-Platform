@@ -7,7 +7,11 @@ export const validateUser = (schema: z.ZodType) => {
     const isValid = schema.safeParse(req.body);
 
     if (!isValid.success) {
-      return res.status(400).json(new ApiError(400, "Data validation failed"));
+       throw new ApiError(
+    400,
+    "Data validation failed",
+    isValid.error.issues,
+  );
     }
 
     req.body = isValid.data;

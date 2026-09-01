@@ -5,16 +5,9 @@ import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 
 const generateAccessAndRefreshTokens = (user: IUser) => {
-  try {
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(
-      500,
-      "Something went wrong while generating access token",
-    );
-  }
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+  return { accessToken, refreshToken };
 };
 
 const registerUser = WrapAsync(async (req: Request, res: Response) => {
@@ -103,6 +96,7 @@ const loginUser = WrapAsync(async (req: Request, res: Response) => {
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry",
   );
+
   const cookieOptions = {
     httpOnly: true,
     secure: true,
