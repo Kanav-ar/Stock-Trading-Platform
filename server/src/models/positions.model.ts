@@ -40,7 +40,10 @@ const positionSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
+});
 
-})
-
-export const Position = mongoose.model("Position",positionSchema)
+export const Position = mongoose.model("Position", positionSchema);
