@@ -1,31 +1,37 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import cookieParser from "cookie-parser";
-import { Holding } from "./models/holdings.model.ts";
-import { Position } from "./models/positions.model.ts";
-import { Order } from "./models/orders.model.ts";
+import cors from "cors";
 import ApiError from "./utils/ApiError.ts";
 import ApiResponse from "./utils/ApiResponse.ts";
 import WrapAsync from "./utils/WrapAsync.ts";
+import { Position } from "./models/positions.model.ts";
+import { Order } from "./models/orders.model.ts";
 
 const app = express();
 
 app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-
-app.get(
-  "/api/holdings",
-  WrapAsync(async (_, res) => {
-    const Holdings = await Holding.find({});
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, Holdings, "All Holdings fetched successfully!"),
-      );
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+import healthCheckRouter from "./routes/healthcheck.routes.ts";
+import userRouter from "./routes/user.routes.ts";
+import holdingRouter from "./routes/holding.routes.ts";
+
+app.use("/api/v1/healthcheck", healthCheckRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/holdings", holdingRouter);
 
 app.get(
   "/api/positions",
@@ -98,9 +104,45 @@ app.get(
         "X-API-Key": process.env.WATCHLIST_API_KEY,
       },
     });
-  const allStocks = await response.json();
-  console.log(allStocks);
-  return res.status(200).json(new ApiResponse(200,allStocks.data, "All stocks data fetched successfully"))
+    const allStocks = await response.json();
+    console.log(allStocks);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          allStocks.data,
+          "All stocks data fetched successfully",
+        ),
+      );
   }),
 );
+
+app.use(
+  (
+    err: Error,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (err instanceof ApiError) {
+      return res.status(err.statusCode).json({
+        statusCode: err.statusCode,
+        data: err.data,
+        success: err.success,
+        message: err.message,
+        errors: err.errors,
+      });
+    }
+
+    return res.status(500).json({
+      statusCode: 500,
+      data: null,
+      success: false,
+      message: "Something went wrong!",
+      errors: [],
+    });
+  },
+);
+
 export default app;

@@ -30,9 +30,15 @@ const holdingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isLoss:{
-    type:Boolean
-  }
+
+  isLoss: {
+    type: Boolean,
+  },
+
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
 });
 
 export const Holding = mongoose.model("Holding", holdingSchema);

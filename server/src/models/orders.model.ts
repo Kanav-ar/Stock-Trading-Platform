@@ -20,6 +20,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
 });
 
-export const Order = mongoose.model("Order", orderSchema);  
+export const Order = mongoose.model("Order", orderSchema);
