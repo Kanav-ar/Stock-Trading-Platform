@@ -1,9 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import crypto from "crypto";
 
 export interface IUser {
+  _id: Types.ObjectId;
+
   username: string;
   email: string;
   fullname?: string;
@@ -11,7 +13,7 @@ export interface IUser {
 
   isEmailVerified: boolean;
 
-  refreshToken?: string;
+  refreshToken?: string | null;
 
   forgotPasswordToken?: string;
   forgotPasswordTokenExpiry?: Date;
@@ -30,7 +32,6 @@ export interface IUser {
     tokenExpiry: Date;
   };
 }
-
 
 const userSchema = new mongoose.Schema<IUser>(
   {
@@ -68,6 +69,7 @@ const userSchema = new mongoose.Schema<IUser>(
 
     refreshToken: {
       type: String,
+      default: null,
     },
 
     forgotPasswordToken: {
@@ -152,9 +154,8 @@ userSchema.methods.generateTemporaryToken = function () {
     .update(unHashedToken)
     .digest("hex");
 
-
-    const tokenExpiry = new Date(Date.now() + (5*60*1000))
-    return {unHashedToken, hashedToken, tokenExpiry}
+  const tokenExpiry = new Date(Date.now() + 5 * 60 * 1000);
+  return { unHashedToken, hashedToken, tokenExpiry };
 };
 
 export const User = mongoose.model("User", userSchema);

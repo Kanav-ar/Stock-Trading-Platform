@@ -1,3 +1,4 @@
+import type { Request } from "express";
 import type { IUser } from "../models/user.models";
 
 declare global {
@@ -7,5 +8,6 @@ declare global {
     }
   }
 }
+
 
 export {};

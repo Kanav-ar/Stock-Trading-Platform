@@ -5,7 +5,7 @@ import WrapAsync from "../utils/WrapAsync";
 import jwt from "jsonwebtoken";
 import { accessTokenPayloadSchema } from "../validators/user/accessToken.validator";
 
-export const auth = WrapAsync(async (req: Request, _, next: NextFunction) => {
+export const authenticate = WrapAsync(async (req: Request, _, next: NextFunction) => {
   const token =
     req.cookies?.accessToken ||
     req.header("Authorization")?.replace("Bearer ", "");

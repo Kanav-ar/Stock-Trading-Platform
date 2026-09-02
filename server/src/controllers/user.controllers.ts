@@ -3,6 +3,7 @@ import WrapAsync from "../utils/WrapAsync";
 import { User, type IUser } from "../models/user.models";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
+import type { AuthenticatedRequest } from "../types/auth.types";
 
 const generateAccessAndRefreshTokens = (user: IUser) => {
   const accessToken = user.generateAccessToken();
@@ -115,4 +116,33 @@ const loginUser = WrapAsync(async (req: Request, res: Response) => {
     );
 });
 
-export { registerUser, loginUser };
+const logoutUser = WrapAsync(
+  async (req: AuthenticatedRequest, res: Response) => {
+   const loggedOutUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          refreshToken: null,
+        },
+      },
+      {
+        returnDocument: "after",
+      },
+    );
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .clearCookie("accessToken", cookieOptions)
+      .clearCookie("refreshToken", cookieOptions)
+      .json(new ApiResponse(200, {loggedOutUser}, "User logged out successfully"));
+  },
+);
+
+
+
+export { registerUser, loginUser, logoutUser };
