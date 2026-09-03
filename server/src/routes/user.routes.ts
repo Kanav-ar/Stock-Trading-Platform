@@ -14,4 +14,6 @@ userRouter
   .route("/login")
   .post(validateUser(loginValidationSchema), loginUser);
 
+
+  // userRouter.route("/mail").post(sendMail)
 export default userRouter;
