@@ -4,6 +4,20 @@ import { welcomeEmailTemplate } from "../templates/welcome-email";
 import { forgotPasswordEmailTemplate } from "../templates/forgot-password-email";
 import type { EmailTemplateProps } from "../types/emailTemplateTypes";
 
+interface SendEmailProps {
+  email: string;
+  username: string;
+  verificationUrl: string;
+  subject: string;
+  emailType: "welcome" | "verify" | "forgotPassword";
+}
+
+interface EmailTemplateTypes {
+  welcome: ({ username, verificationUrl }: EmailTemplateProps) => string;
+  verify: ({ username, verificationUrl }: EmailTemplateProps) => string;
+  forgotPassword: ({ username, verificationUrl }: EmailTemplateProps) => string;
+}
+
 const apiKey = process.env.RESEND_API_KEY;
 
 if (!apiKey) {
@@ -11,12 +25,6 @@ if (!apiKey) {
 }
 
 const resend = new Resend(apiKey);
-
-interface EmailTemplateTypes {
-  welcome: ({ username, verificationUrl }: EmailTemplateProps) => string;
-  verify: ({ username, verificationUrl }: EmailTemplateProps) => string;
-  forgotPassword: ({ username, verificationUrl }: EmailTemplateProps) => string;
-}
 
 const emailTemplates: EmailTemplateTypes = {
   welcome: welcomeEmailTemplate,
@@ -30,13 +38,7 @@ export const sendEmail = async ({
   verificationUrl,
   subject,
   emailType,
-}: {
-  email: string;
-  username: string;
-  verificationUrl: string;
-  subject: string;
-  emailType: "welcome" | "verify" | "forgotPassword";
-}) => {
+}: SendEmailProps) => {
   const html = emailTemplates[emailType]({
     username,
     verificationUrl,

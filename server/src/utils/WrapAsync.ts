@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 
-const WrapAsync = <T extends Request>(
-  fn: (req: T, res: Response, next: NextFunction) => Promise<any>
+const WrapAsync = (
+  requestHandler: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {
-  return (req: T, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(requestHandler(req, res, next)).catch(next);
   };
 };
 
