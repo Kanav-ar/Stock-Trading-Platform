@@ -4,10 +4,11 @@ import {
   deleteHolding,
   getAllHoldings,
 } from "../controllers/holdings.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const holdingRouter = Router();
 
-holdingRouter.route("/").get(getAllHoldings).post(addHolding)
-holdingRouter.route("/:id").delete(deleteHolding);
+holdingRouter.route("/").get(getAllHoldings).post(authenticate, addHolding);
+holdingRouter.route("/:id").delete(authenticate, deleteHolding);
 
 export default holdingRouter;
