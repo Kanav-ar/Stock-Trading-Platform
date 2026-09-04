@@ -1,5 +1,8 @@
 import { Order } from "../models/orders.model";
-import { executeBuyOrder } from "../services/order/order.service";
+import {
+  executeBuyOrder,
+  executeSellOrder,
+} from "../services/order/order.service";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
@@ -13,15 +16,8 @@ const getAllOrders = WrapAsync(async (req, res) => {
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        orders,
-        "All orders fetched successfully",
-      ),
-    );
+    .json(new ApiResponse(200, orders, "All orders fetched successfully"));
 });
-
 
 const getOrderById = WrapAsync(async (req, res) => {
   const { orderId } = req.params;
@@ -37,31 +33,15 @@ const getOrderById = WrapAsync(async (req, res) => {
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        order,
-        "Order fetched successfully",
-      ),
-    );
+    .json(new ApiResponse(200, order, "Order fetched successfully"));
 });
 
-
 const buyOrder = WrapAsync(async (req, res) => {
-  
   if (!req.user) {
     throw new ApiError(401, "Unauthorized request");
   }
-  
-  const {
-    symbol,
-    exchange,
-    isin,
-    name,
-    qty,
-    price,
-    product,
-  } = req.body;
+
+  const { symbol, exchange, isin, name, qty, price, product } = req.body;
 
   const order = await executeBuyOrder({
     userId: req.user._id,
@@ -76,29 +56,18 @@ const buyOrder = WrapAsync(async (req, res) => {
 
   return res
     .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        order,
-        "Buy order placed successfully",
-      ),
-    );
+    .json(new ApiResponse(201, order, "Buy order placed successfully"));
 });
 
-
 const sellOrder = WrapAsync(async (req, res) => {
-  const {
-    symbol,
-    exchange,
-    isin,
-    name,
-    qty,
-    price,
-    product,
-  } = req.body;
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  const { symbol, exchange, isin, name, qty, price, product } = req.body;
 
   const order = await executeSellOrder({
-    userId: req.user?._id,
+    userId: req.user._id,
     symbol,
     exchange,
     isin,
@@ -110,13 +79,7 @@ const sellOrder = WrapAsync(async (req, res) => {
 
   return res
     .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        order,
-        "Sell order placed successfully",
-      ),
-    );
+    .json(new ApiResponse(201, order, "Sell order placed successfully"));
 });
 
 export { getAllOrders, getOrderById, buyOrder, sellOrder };

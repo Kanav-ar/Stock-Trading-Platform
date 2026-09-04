@@ -5,7 +5,7 @@ import { Holding } from "../../models/holdings.model";
 import { Position } from "../../models/positions.model";
 import { Order } from "../../models/orders.model";
 
-interface BuyOrderData {
+interface OrderDataType {
   userId: Types.ObjectId;
   symbol: string;
   exchange: string;
@@ -25,7 +25,7 @@ export const executeBuyOrder = async ({
   qty,
   price,
   product,
-}: BuyOrderData) => {
+}: OrderDataType) => {
   const session = await mongoose.startSession();
 
   try {
@@ -42,8 +42,6 @@ export const executeBuyOrder = async ({
     const totalCost = qty * price;
 
     if (product === "CNC") {
-      // CNC - available cash
-
       if (funds.availableCash < totalCost) {
         throw new ApiError(400, "Insufficient funds");
       }
@@ -85,18 +83,14 @@ export const executeBuyOrder = async ({
           { session },
         );
       } else {
-        const oldQuantity = existingHolding.qty;
-        const oldAverage = existingHolding.avg;
-
-        const newQuantity = oldQuantity + qty;
+        const newQuantity = existingHolding.qty + qty;
 
         const newAverage =
-          (oldQuantity * oldAverage + qty * price) / newQuantity;
+          (existingHolding.qty * existingHolding.avg + qty * price) /
+          newQuantity;
 
         existingHolding.qty = newQuantity;
         existingHolding.avg = newAverage;
-
-        // Current market/execution price
         existingHolding.price = price;
 
         await existingHolding.save({ session });
@@ -127,13 +121,11 @@ export const executeBuyOrder = async ({
           { session },
         );
       } else {
-        const oldQuantity = existingPosition.qty;
-        const oldAverage = existingPosition.avg;
-
-        const newQuantity = oldQuantity + qty;
+        const newQuantity = existingPosition.qty + qty;
 
         const newAverage =
-          (oldQuantity * oldAverage + qty * price) / newQuantity;
+          (existingPosition.qty * existingPosition.avg + qty * price) /
+          newQuantity;
 
         existingPosition.qty = newQuantity;
         existingPosition.avg = newAverage;
@@ -165,9 +157,141 @@ export const executeBuyOrder = async ({
 
     return order;
   } catch (error) {
-    // Rollback EVERYTHING if any operation fails
     await session.abortTransaction();
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+};
 
+export const executeSellOrder = async ({
+  userId,
+  symbol,
+  exchange,
+  isin,
+  name,
+  qty,
+  price,
+  product,
+}: OrderDataType) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const funds = await Fund.findOne({
+      owner: userId,
+    }).session(session);
+
+    if (!funds) {
+      throw new ApiError(404, "Funds account not found");
+    }
+
+    const saleValue = qty * price;
+
+    if (product === "CNC") {
+      const holding = await Holding.findOne({
+        owner: userId,
+        symbol,
+        exchange,
+      }).session(session);
+
+      if (!holding) {
+        throw new ApiError(404, "You do not own this stock");
+      }
+
+      if (holding.qty < qty) {
+        throw new ApiError(400, "You do not own enough quantity to sell");
+      }
+
+      funds.availableCash += saleValue;
+
+      await funds.save({ session });
+
+      if (holding.qty === qty) {
+        await Holding.deleteOne(
+          {
+            _id: holding._id,
+          },
+          { session },
+        );
+      } else {
+        holding.qty -= qty;
+        holding.price = price;
+
+        await holding.save({ session });
+      }
+    } else {
+      const position = await Position.findOne({
+        owner: userId,
+        symbol,
+        exchange,
+        product: "MIS",
+      }).session(session);
+
+      if (!position) {
+        throw new ApiError(
+          404,
+          "You do not have an open position for this stock",
+        );
+      }
+
+      if (position.qty < qty) {
+        throw new ApiError(400, "You do not have enough quantity to sell");
+      }
+
+      // Margin originally tied to these shares
+      const releasedMargin = position.avg * qty;
+
+      // Realized profit/loss
+      const realizedPnL = (price - position.avg) * qty;
+
+      // Release margin
+      funds.usedMargin -= releasedMargin;
+
+      // Apply realized profit/loss to cash
+      funds.availableCash += realizedPnL;
+
+      await funds.save({ session });
+
+      if (position.qty === qty) {
+        await Position.deleteOne(
+          {
+            _id: position._id,
+          },
+          { session },
+        );
+      } else {
+        position.qty -= qty;
+        position.price = price;
+
+        await position.save({ session });
+      }
+    }
+
+    const [order] = await Order.create(
+      [
+        {
+          owner: userId,
+          symbol,
+          exchange,
+          isin,
+          name,
+          qty,
+          price,
+          side: "SELL",
+          product,
+          status: "COMPLETED",
+        },
+      ],
+      { session },
+    );
+
+    await session.commitTransaction();
+
+    return order;
+  } catch (error) {
+    await session.abortTransaction();
     throw error;
   } finally {
     await session.endSession();

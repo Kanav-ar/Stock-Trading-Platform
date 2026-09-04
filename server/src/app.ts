@@ -26,14 +26,15 @@ import userRouter from "./routes/user.routes.ts";
 import holdingRouter from "./routes/holding.routes.ts";
 import positionRouter from "./routes/position.routes.ts";
 import orderRouter from "./routes/order.routes.ts";
+import fundRouter from "./routes/fund.routes.ts";
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/holdings", holdingRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/positions", positionRouter);
+app.use("/api/v1/funds",fundRouter)
 app.use("/api/v1/watchlist", holdingRouter);
-
 
 
 app.use(
@@ -52,7 +53,7 @@ app.use(
         errors: err.errors,
       });
     }
-
+    console.error(err);
     return res.status(500).json({
       statusCode: 500,
       data: null,

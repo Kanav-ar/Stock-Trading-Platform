@@ -1,8 +1,8 @@
 import { Resend } from "resend";
-import { verificationEmailTemplate } from "../templates/verification-email";
-import { welcomeEmailTemplate } from "../templates/welcome-email";
-import { forgotPasswordEmailTemplate } from "../templates/forgot-password-email";
-import type { EmailTemplateProps } from "../types/emailTemplateTypes";
+import { welcomeEmailTemplate } from "../../templates/welcome-email";
+import { verificationEmailTemplate } from "../../templates/verification-email";
+import { forgotPasswordEmailTemplate } from "../../templates/forgot-password-email";
+import type { EmailTemplateProps } from "../../types/emailTemplateTypes";
 
 interface SendEmailProps {
   email: string;

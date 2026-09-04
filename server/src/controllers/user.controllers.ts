@@ -185,8 +185,8 @@ const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
   const validDecodedToken =
     refreshTokenPayloadSchema.safeParse(decodedRefreshToken);
 
-    if(!validDecodedToken){
-      throw new ApiError(400,"Invalid data has been sent")
+    if(!validDecodedToken.success){
+      throw new ApiError(403,"Invalid token")
     }
 
   const user = await User.findById(validDecodedToken.data?._id);

@@ -11,7 +11,7 @@ import {
   resetForgotPassword,
   verifyEmail,
 } from "../controllers/user.controllers";
-import { validateUser } from "../middlewares/validation.middleware";
+import { validate } from "../middlewares/validation.middleware";
 import { registerValidationSchema } from "../validators/user/register.validator";
 import { loginValidationSchema } from "../validators/user/login.validator";
 import { authenticate } from "../middlewares/auth.middleware";
@@ -20,9 +20,9 @@ const userRouter = Router();
 
 userRouter
   .route("/register")
-  .post(validateUser(registerValidationSchema), registerUser);
+  .post(validate(registerValidationSchema), registerUser);
 
-userRouter.route("/login").post(validateUser(loginValidationSchema), loginUser);
+userRouter.route("/login").post(validate(loginValidationSchema), loginUser);
 
 userRouter.route("/verify-email/:verificationToken").post(verifyEmail);
 
