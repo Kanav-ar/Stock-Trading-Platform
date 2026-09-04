@@ -18,11 +18,25 @@ const orderSchema = new mongoose.Schema({
 
   mode: {
     type: String,
+    enum: ["BUY", "SELL"],
     required: true,
   },
+
+  product: {
+    type: String,
+    enum: ["CNC", "MIS"],
+  },
+
+  status: {
+    type: String,
+    enum: ["COMPLETED", "FAILED"],
+    default: "COMPLETED",
+  },
+
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
+    ref: "User",
+    required: true,
   },
 });
 
