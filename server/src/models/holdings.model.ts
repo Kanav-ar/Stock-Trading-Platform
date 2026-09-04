@@ -7,14 +7,18 @@ const holdingSchema = new mongoose.Schema(
       required: true,
     },
 
-     symbol: {
+    symbol: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     exchange: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     isin: {
@@ -24,6 +28,7 @@ const holdingSchema = new mongoose.Schema(
     qty: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     avg: {
@@ -43,6 +48,17 @@ const holdingSchema = new mongoose.Schema(
     },
   },
   { timestamps: true },
+);
+
+holdingSchema.index(
+  {
+    owner: 1,
+    symbol: 1,
+    exchange: 1,
+  },
+  {
+    unique: true,
+  },
 );
 
 export const Holding = mongoose.model("Holding", holdingSchema);

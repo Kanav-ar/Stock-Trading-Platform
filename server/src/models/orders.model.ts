@@ -11,11 +11,15 @@ const orderSchema = new mongoose.Schema(
     symbol: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     exchange: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     isin: {

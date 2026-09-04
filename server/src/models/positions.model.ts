@@ -11,11 +11,15 @@ const positionSchema = new mongoose.Schema(
     symbol: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     exchange: {
       type: String,
       required: true,
+      uppercase: true,
+      trim: true,
     },
 
     isin: {
@@ -36,6 +40,7 @@ const positionSchema = new mongoose.Schema(
     qty: {
       type: Number,
       required: true,
+      qty: 0,
     },
 
     avg: {
@@ -51,6 +56,18 @@ const positionSchema = new mongoose.Schema(
     },
   },
   { timestamps: true },
+);
+
+positionSchema.index(
+  {
+    owner: 1,
+    symbol: 1,
+    exchange: 1,
+    product: 1,
+  },
+  {
+    unique: true,
+  },
 );
 
 export const Position = mongoose.model("Position", positionSchema);
