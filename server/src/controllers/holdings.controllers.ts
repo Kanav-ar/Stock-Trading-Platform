@@ -4,7 +4,9 @@ import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
 
 const getAllHoldings = WrapAsync(async (req, res) => {
-  const holdings = await Holding.find({owner:req.user?._id});
+  const holdings = await Holding.find({ owner: req.user?._id }).sort({
+    createdAt: -1,
+  });
 
   return res
     .status(200)
@@ -25,7 +27,6 @@ const addHolding = WrapAsync(async (req, res) => {
     owner: req.user?._id,
   });
 
-
   return res
     .status(200)
     .json(new ApiResponse(200, newHolding, "New holding has been created"));
@@ -43,19 +44,18 @@ const deleteHolding = WrapAsync(async (req, res) => {
     );
   }
 
-  if(!(req.user?._id.equals(existingHolding.owner))){
-    throw new ApiError(403, "You are not the owner of this holding")
+  if (!req.user?._id.equals(existingHolding.owner)) {
+    throw new ApiError(403, "You are not the owner of this holding");
   }
 
-  const deletedHolding = await Holding.findByIdAndDelete(existingHolding._id)
-  
+  const deletedHolding = await Holding.findByIdAndDelete(existingHolding._id);
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        {deletedHolding},
+        { deletedHolding },
         `Holding with id ${id} has been deleted successfully`,
       ),
     );

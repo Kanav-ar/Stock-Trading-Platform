@@ -27,6 +27,26 @@ const buyOrder = WrapAsync(async (req, res) => {
     .json(new ApiResponse(200, newOrder, "Order placed successfully"));
 });
 
+const getSingleOrder = WrapAsync(async (req, res) => {
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({ _id: orderId, owner: req.user?._id });
+
+  if (!order) {
+    throw new ApiError(404, "Order you are trying to view doesn't exist");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        order,
+        `Order with id ${orderId} fetched successfully`,
+      ),
+    );
+});
+
 const sellOrder = WrapAsync(async (req, res) => {
   const { orderId } = req.params;
 
@@ -50,5 +70,4 @@ const sellOrder = WrapAsync(async (req, res) => {
     .json(new ApiResponse(200, deletedOrder, "Order sold successfully"));
 });
 
-
-export {getAllOrders, buyOrder, sellOrder}
+export { getAllOrders, getSingleOrder, buyOrder, sellOrder };
