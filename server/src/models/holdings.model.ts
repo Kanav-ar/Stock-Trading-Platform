@@ -7,6 +7,20 @@ const holdingSchema = new mongoose.Schema(
       required: true,
     },
 
+     symbol: {
+      type: String,
+      required: true,
+    },
+
+    exchange: {
+      type: String,
+      required: true,
+    },
+
+    isin: {
+      type: String,
+    },
+
     qty: {
       type: Number,
       required: true,

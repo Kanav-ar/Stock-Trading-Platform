@@ -4,21 +4,34 @@ import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
 
 const getAllOrders = WrapAsync(async (req, res) => {
-  const allOrders = await Order.find({ owner: req.user?._id });
+  const orders = await Order.find({
+    owner: req.user?._id,
+  }).sort({
+    createdAt: -1,
+  });
 
   return res
     .status(200)
-    .json(new ApiResponse(200, allOrders, "All orders fetched successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        orders,
+        "All orders fetched successfully",
+      ),
+    );
 });
 
 
-const getSingleOrder = WrapAsync(async (req, res) => {
-  const { orderId } = req.params;
+const getOrderById = WrapAsync(async (req, res) => {
+  const { id } = req.params;
 
-  const order = await Order.findOne({ _id: orderId, owner: req.user?._id });
+  const order = await Order.findOne({
+    _id: id,
+    owner: req.user?._id,
+  });
 
   if (!order) {
-    throw new ApiError(404, "Order you are trying to view doesn't exist");
+    throw new ApiError(404, "Order not found");
   }
 
   return res
@@ -27,25 +40,43 @@ const getSingleOrder = WrapAsync(async (req, res) => {
       new ApiResponse(
         200,
         order,
-        `Order with id ${orderId} fetched successfully`,
+        "Order fetched successfully",
       ),
     );
 });
 
-const buyOrder = WrapAsync(async (req, res) => {
-  const newOrder = new Order({
-    name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode: req.body.mode,
-    owner: req.user?._id,
-  });
 
-  await newOrder.save();
+const buyOrder = WrapAsync(async (req, res) => {
+  const {
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  } = req.body;
+
+  // const order = await executeBuyOrder({
+  //   userId: req.user?._id,
+  //   symbol,
+  //   exchange,
+  //   isin,
+  //   name,
+  //   qty,
+  //   price,
+  //   product,
+  // });
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, newOrder, "Order placed successfully"));
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        {},
+        "Buy order placed successfully",
+      ),
+    );
 });
 
 
@@ -72,4 +103,4 @@ const sellOrder = WrapAsync(async (req, res) => {
     .json(new ApiResponse(200, deletedOrder, "Order sold successfully"));
 });
 
-export { getAllOrders, getSingleOrder, buyOrder, sellOrder };
+export { getAllOrders, getOrderById, buyOrder, sellOrder };

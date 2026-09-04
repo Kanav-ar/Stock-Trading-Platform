@@ -2,14 +2,34 @@ import mongoose from "mongoose";
 
 const positionSchema = new mongoose.Schema(
   {
-    product: {
-      type: String,
-      enum: ["CNC", "MIS"],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
+    },
+
+    symbol: {
+      type: String,
+      required: true,
+    },
+
+    exchange: {
+      type: String,
+      required: true,
+    },
+
+    isin: {
+      type: String,
     },
 
     name: {
       type: String,
+      required: true,
+    },
+
+    product: {
+      type: String,
+      enum: ["CNC", "MIS"],
       required: true,
     },
 
@@ -21,16 +41,13 @@ const positionSchema = new mongoose.Schema(
     avg: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     price: {
       type: Number,
       required: true,
-    },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      min: 0,
     },
   },
   { timestamps: true },

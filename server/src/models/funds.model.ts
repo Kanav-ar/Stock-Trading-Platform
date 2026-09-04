@@ -5,11 +5,13 @@ const fundsSchema = new mongoose.Schema(
     availableCash: {
       type: Number,
       default: 0,
+      min:0,
     },
 
     usedMargin: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     payin: {
