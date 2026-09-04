@@ -6,8 +6,8 @@ const orderRouter = Router();
 
 orderRouter.route("/").get(authenticate, getAllOrders);
 
-orderRouter.route("/:orderId").get(authenticate, getSingleOrder);
-
 orderRouter.route("/buy").post(authenticate, buyOrder);
 
 orderRouter.route("/sell").post(authenticate, sellOrder);
+
+orderRouter.route("/:orderId").get(authenticate, getSingleOrder);

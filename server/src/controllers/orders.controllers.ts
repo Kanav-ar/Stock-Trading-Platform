@@ -11,21 +11,6 @@ const getAllOrders = WrapAsync(async (req, res) => {
     .json(new ApiResponse(200, allOrders, "All orders fetched successfully"));
 });
 
-const buyOrder = WrapAsync(async (req, res) => {
-  const newOrder = new Order({
-    name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode: req.body.mode,
-    owner: req.user?._id,
-  });
-
-  await newOrder.save();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, newOrder, "Order placed successfully"));
-});
 
 const getSingleOrder = WrapAsync(async (req, res) => {
   const { orderId } = req.params;
@@ -46,6 +31,23 @@ const getSingleOrder = WrapAsync(async (req, res) => {
       ),
     );
 });
+
+const buyOrder = WrapAsync(async (req, res) => {
+  const newOrder = new Order({
+    name: req.body.name,
+    qty: req.body.qty,
+    price: req.body.price,
+    mode: req.body.mode,
+    owner: req.user?._id,
+  });
+
+  await newOrder.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, newOrder, "Order placed successfully"));
+});
+
 
 const sellOrder = WrapAsync(async (req, res) => {
   const { orderId } = req.params;
