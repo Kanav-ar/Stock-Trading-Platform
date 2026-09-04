@@ -3,12 +3,12 @@ import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
 
-const getAllHoldings = WrapAsync(async (_, res) => {
-  const Holdings = await Holding.find({});
+const getAllHoldings = WrapAsync(async (req, res) => {
+  const holdings = await Holding.find({owner:req.user?._id});
 
   return res
     .status(200)
-    .json(new ApiResponse(200, Holdings, "All Holdings fetched successfully!"));
+    .json(new ApiResponse(200, holdings, "All Holdings fetched successfully!"));
 });
 
 const addHolding = WrapAsync(async (req, res) => {
@@ -22,9 +22,9 @@ const addHolding = WrapAsync(async (req, res) => {
     day: holding.day,
     isLoss: holding.isLoss,
     net: holding.net,
+    owner: req.user?._id,
   });
 
-  await newHolding.save();
 
   return res
     .status(200)
@@ -39,16 +39,23 @@ const deleteHolding = WrapAsync(async (req, res) => {
   if (!existingHolding) {
     throw new ApiError(
       404,
-      "The holding you are trying to delete does't exist",
+      "The holding you are trying to delete doesn't exist",
     );
   }
+
+  if(!(req.user?._id.equals(existingHolding.owner))){
+    throw new ApiError(403, "You are not the owner of this holding")
+  }
+
+  const deletedHolding = await Holding.findByIdAndDelete(existingHolding._id)
+  
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        {},
+        {deletedHolding},
         `Holding with id ${id} has been deleted successfully`,
       ),
     );
