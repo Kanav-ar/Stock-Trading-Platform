@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   loginUser,
   logoutUser,
+  refreshAccessToken,
   registerUser,
   resendEmailVerification,
   resetForgotPassword,
@@ -29,6 +30,8 @@ userRouter.route("/forgot-password").post(forgotPasswordRequest);
 userRouter
   .route("/forgot-password/:resetPasswordToken")
   .post(resetForgotPassword);
+
+userRouter.route("/refresh-token").post(refreshAccessToken)
 
 // protected routes
 userRouter.route("/me").get(authenticate, getCurrentUser);

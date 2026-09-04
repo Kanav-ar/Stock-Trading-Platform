@@ -6,7 +6,7 @@ import ApiResponse from "../utils/ApiResponse";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { refreshTokenPayloadSchema } from "../validators/user/refreshToken.validator";
-import { sendEmail } from "../services/email.service";
+import { sendEmail } from "../services/email/email.service";
 
 const generateAccessAndRefreshTokens = (user: IUser) => {
   const accessToken = user.generateAccessToken();
@@ -49,7 +49,7 @@ const registerUser = WrapAsync(async (req: Request, res: Response) => {
   newUser.refreshToken = refreshToken;
   await newUser.save();
 
-  sendEmail({
+  await sendEmail({
     email: newUser.email,
     username: newUser.username,
     verificationUrl: `${process.env.FRONTEND_URL}/verify-email/${unHashedToken}`,
@@ -119,7 +119,7 @@ const loginUser = WrapAsync(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         200,
-        { user: loggedInUser, accessToken, refreshToken },
+        { user: loggedInUser },
         "User logged in successfully",
       ),
     );
@@ -185,6 +185,10 @@ const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
   const validDecodedToken =
     refreshTokenPayloadSchema.safeParse(decodedRefreshToken);
 
+    if(!validDecodedToken){
+      throw new ApiError(400,"Invalid data has been sent")
+    }
+
   const user = await User.findById(validDecodedToken.data?._id);
 
   if (!user) {
@@ -200,7 +204,7 @@ const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
 
   user.refreshToken = newRefreshToken;
 
-  user.save({ validateBeforeSave: false });
+  await user.save({ validateBeforeSave: false });
 
   const cookieOptions = {
     httpOnly: true,
@@ -234,7 +238,7 @@ const verifyEmail = WrapAsync(async (req: Request, res: Response) => {
 
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
-    emailVerificationExpiry: { $gt: Date.now() },
+    emailVerificationExpiry: { $gt: new Date() },
   });
 
   if (!user) {
@@ -302,7 +306,7 @@ const forgotPasswordRequest = WrapAsync(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(404, "User doesn't exist");
+    throw new ApiError(404, "If an account exists for this email, a password reset link has been sent.");
   }
 
   const { unHashedToken, hashedToken, tokenExpiry } =
@@ -365,10 +369,11 @@ const resetForgotPassword = WrapAsync(async (req: Request, res: Response) => {
 
   user.password = newPassword;
 
-  await user.save({ validateBeforeSave: false });
-
   user.forgotPasswordToken = undefined;
   user.forgotPasswordTokenExpiry = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
 
   return res
     .status(200)
@@ -384,7 +389,7 @@ const changePassword = WrapAsync(async (req: Request, res: Response) => {
     throw new ApiError(404, "User not found");
   }
 
-  const isPasswordValid = user.isPasswordCorrect(currentPassword);
+  const isPasswordValid = await user.isPasswordCorrect(currentPassword);
 
   if (!isPasswordValid) {
     throw new ApiError(400, "Current password is not valid");

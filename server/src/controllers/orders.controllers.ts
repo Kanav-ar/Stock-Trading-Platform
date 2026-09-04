@@ -1,4 +1,5 @@
 import { Order } from "../models/orders.model";
+import { executeBuyOrder } from "../services/order/order.service";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
@@ -23,10 +24,10 @@ const getAllOrders = WrapAsync(async (req, res) => {
 
 
 const getOrderById = WrapAsync(async (req, res) => {
-  const { id } = req.params;
+  const { orderId } = req.params;
 
   const order = await Order.findOne({
-    _id: id,
+    _id: orderId,
     owner: req.user?._id,
   });
 
@@ -47,6 +48,11 @@ const getOrderById = WrapAsync(async (req, res) => {
 
 
 const buyOrder = WrapAsync(async (req, res) => {
+  
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+  
   const {
     symbol,
     exchange,
@@ -57,23 +63,23 @@ const buyOrder = WrapAsync(async (req, res) => {
     product,
   } = req.body;
 
-  // const order = await executeBuyOrder({
-  //   userId: req.user?._id,
-  //   symbol,
-  //   exchange,
-  //   isin,
-  //   name,
-  //   qty,
-  //   price,
-  //   product,
-  // });
+  const order = await executeBuyOrder({
+    userId: req.user._id,
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  });
 
   return res
     .status(201)
     .json(
       new ApiResponse(
         201,
-        {},
+        order,
         "Buy order placed successfully",
       ),
     );
@@ -81,26 +87,36 @@ const buyOrder = WrapAsync(async (req, res) => {
 
 
 const sellOrder = WrapAsync(async (req, res) => {
-  const { orderId } = req.params;
+  const {
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  } = req.body;
 
-  const orderToSell = await Order.findById(orderId);
-
-  if (!orderToSell) {
-    throw new ApiError(404, "The order you are trying to sell doen't exist");
-  }
-
-  if (!orderToSell.owner?.equals(req.user?._id)) {
-    throw new ApiError(
-      403,
-      "You have not purchased this stock, only purchased stocks can be sold",
-    );
-  }
-
-  const deletedOrder = await Order.findByIdAndDelete(orderToSell._id);
+  const order = await executeSellOrder({
+    userId: req.user?._id,
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  });
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, deletedOrder, "Order sold successfully"));
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        order,
+        "Sell order placed successfully",
+      ),
+    );
 });
 
 export { getAllOrders, getOrderById, buyOrder, sellOrder };
