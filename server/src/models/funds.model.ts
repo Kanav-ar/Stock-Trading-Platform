@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
 
 const fundsSchema = new mongoose.Schema({
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-    unique: true,
-  },
-
   availableCash: {
     type: Number,
     default: 0,
@@ -26,6 +19,12 @@ const fundsSchema = new mongoose.Schema({
   openingBalance: {
     type: Number,
     default: 0,
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    unique: true,
   },
 });
 
