@@ -1,43 +1,69 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const orderSchema = new mongoose.Schema(
+  {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
-  qty: {
-    type: Number,
-    required: true,
-  },
+    symbol: {
+      type: String,
+      required: true,
+      uppercase: true,
+      trim: true,
+    },
 
-  price: {
-    type: Number,
-    required: true,
-  },
+    exchange: {
+      type: String,
+      required: true,
+      uppercase: true,
+      trim: true,
+    },
 
-  mode: {
-    type: String,
-    enum: ["BUY", "SELL"],
-    required: true,
-  },
+    isin: {
+      type: String,
+    },
 
-  product: {
-    type: String,
-    enum: ["CNC", "MIS"],
-  },
+    name: {
+      type: String,
+      required: true,
+    },
 
-  status: {
-    type: String,
-    enum: ["COMPLETED", "FAILED"],
-    default: "COMPLETED",
-  },
+    qty: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
 
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    side: {
+      type: String,
+      enum: ["BUY", "SELL"],
+      required: true,
+    },
+
+    product: {
+      type: String,
+      enum: ["CNC", "MIS"],
+      required: true,
+    },
+
+    status: {
+      type: String,
+      enum: ["COMPLETED", "FAILED"],
+      default: "COMPLETED",
+    },
   },
-});
+  {
+    timestamps: true,
+  },
+);
 
 export const Order = mongoose.model("Order", orderSchema);

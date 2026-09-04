@@ -35,7 +35,7 @@ const addFunds = WrapAsync(async (req, res) => {
       },
     },
     {
-      new: true,
+      returnDocument: "after",
       upsert: true,
     },
   );

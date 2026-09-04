@@ -2,10 +2,28 @@ import mongoose from "mongoose";
 
 const positionSchema = new mongoose.Schema(
   {
-    product: {
-      type: String,
-      enum: ["CNC", "MIS"],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
+    },
+
+    symbol: {
+      type: String,
+      required: true,
+      uppercase: true,
+      trim: true,
+    },
+
+    exchange: {
+      type: String,
+      required: true,
+      uppercase: true,
+      trim: true,
+    },
+
+    isin: {
+      type: String,
     },
 
     name: {
@@ -13,27 +31,43 @@ const positionSchema = new mongoose.Schema(
       required: true,
     },
 
+    product: {
+      type: String,
+      enum: ["CNC", "MIS"],
+      required: true,
+    },
+
     qty: {
       type: Number,
       required: true,
+      qty: 0,
     },
 
     avg: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     price: {
       type: Number,
       required: true,
-    },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      min: 0,
     },
   },
   { timestamps: true },
+);
+
+positionSchema.index(
+  {
+    owner: 1,
+    symbol: 1,
+    exchange: 1,
+    product: 1,
+  },
+  {
+    unique: true,
+  },
 );
 
 export const Position = mongoose.model("Position", positionSchema);

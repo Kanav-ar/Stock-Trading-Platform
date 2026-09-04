@@ -1,75 +1,85 @@
 import { Order } from "../models/orders.model";
+import {
+  executeBuyOrder,
+  executeSellOrder,
+} from "../services/order/order.service";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import WrapAsync from "../utils/WrapAsync";
 
 const getAllOrders = WrapAsync(async (req, res) => {
-  const allOrders = await Order.find({ owner: req.user?._id });
+  const orders = await Order.find({
+    owner: req.user?._id,
+  }).sort({
+    createdAt: -1,
+  });
 
   return res
     .status(200)
-    .json(new ApiResponse(200, allOrders, "All orders fetched successfully"));
+    .json(new ApiResponse(200, orders, "All orders fetched successfully"));
 });
 
-
-const getSingleOrder = WrapAsync(async (req, res) => {
+const getOrderById = WrapAsync(async (req, res) => {
   const { orderId } = req.params;
 
-  const order = await Order.findOne({ _id: orderId, owner: req.user?._id });
-
-  if (!order) {
-    throw new ApiError(404, "Order you are trying to view doesn't exist");
-  }
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        order,
-        `Order with id ${orderId} fetched successfully`,
-      ),
-    );
-});
-
-const buyOrder = WrapAsync(async (req, res) => {
-  const newOrder = new Order({
-    name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode: req.body.mode,
+  const order = await Order.findOne({
+    _id: orderId,
     owner: req.user?._id,
   });
 
-  await newOrder.save();
+  if (!order) {
+    throw new ApiError(404, "Order not found");
+  }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, newOrder, "Order placed successfully"));
+    .json(new ApiResponse(200, order, "Order fetched successfully"));
 });
 
+const buyOrder = WrapAsync(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  const { symbol, exchange, isin, name, qty, price, product } = req.body;
+
+  const order = await executeBuyOrder({
+    userId: req.user._id,
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, order, "Buy order placed successfully"));
+});
 
 const sellOrder = WrapAsync(async (req, res) => {
-  const { orderId } = req.params;
-
-  const orderToSell = await Order.findById(orderId);
-
-  if (!orderToSell) {
-    throw new ApiError(404, "The order you are trying to sell doen't exist");
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized request");
   }
 
-  if (!orderToSell.owner?.equals(req.user?._id)) {
-    throw new ApiError(
-      403,
-      "You have not purchased this stock, only purchased stocks can be sold",
-    );
-  }
+  const { symbol, exchange, isin, name, qty, price, product } = req.body;
 
-  const deletedOrder = await Order.findByIdAndDelete(orderToSell._id);
+  const order = await executeSellOrder({
+    userId: req.user._id,
+    symbol,
+    exchange,
+    isin,
+    name,
+    qty,
+    price,
+    product,
+  });
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, deletedOrder, "Order sold successfully"));
+    .status(201)
+    .json(new ApiResponse(201, order, "Sell order placed successfully"));
 });
 
-export { getAllOrders, getSingleOrder, buyOrder, sellOrder };
+export { getAllOrders, getOrderById, buyOrder, sellOrder };

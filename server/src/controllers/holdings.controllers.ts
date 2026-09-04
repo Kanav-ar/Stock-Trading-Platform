@@ -17,15 +17,15 @@ const addHolding = WrapAsync(async (req, res) => {
   const { holding } = req.body;
 
   const newHolding = await Holding.create({
-    name: holding.name,
-    price: holding.price,
-    qty: holding.qty,
-    avg: holding.avg,
-    day: holding.day,
-    isLoss: holding.isLoss,
-    net: holding.net,
-    owner: req.user?._id,
-  });
+  symbol: holding.symbol,
+  exchange: holding.exchange,
+  isin: holding.isin,
+  name: holding.name,
+  price: holding.price,
+  qty: holding.qty,
+  avg: holding.avg,
+  owner: req.user?._id,
+});
 
   return res
     .status(200)
