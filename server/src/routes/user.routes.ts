@@ -1,5 +1,15 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser, verifyEmail } from "../controllers/user.controllers";
+import {
+  changePassword,
+  forgotPasswordRequest,
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+  resendEmailVerification,
+  resetForgotPassword,
+  verifyEmail,
+} from "../controllers/user.controllers";
 import { validateUser } from "../middlewares/validation.middleware";
 import { registerValidationSchema } from "../validators/user/register.validator";
 import { loginValidationSchema } from "../validators/user/login.validator";
@@ -11,15 +21,19 @@ userRouter
   .route("/register")
   .post(validateUser(registerValidationSchema), registerUser);
 
-userRouter
-  .route("/login")
-  .post(validateUser(loginValidationSchema), loginUser);
-
+userRouter.route("/login").post(validateUser(loginValidationSchema), loginUser);
 
 userRouter.route("/verify-email/:verificationToken").post(verifyEmail);
 
-// protected routes
-userRouter.route("/logout").post(authenticate, logoutUser );
+userRouter.route("/forgot-password").post(forgotPasswordRequest);
+userRouter
+  .route("/forgot-password/:resetPasswordToken")
+  .post(resetForgotPassword);
 
+// protected routes
+userRouter.route("/me").get(authenticate, getCurrentUser);
+userRouter.route("/logout").post(authenticate, logoutUser);
+userRouter.route("/resend").post(authenticate, resendEmailVerification);
+userRouter.route("/change-password").post(authenticate, changePassword);
 
 export default userRouter;

@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import WrapAsync from "../utils/WrapAsync";
 import { User, type IUser } from "../models/user.models";
 import ApiError from "../utils/ApiError";
@@ -126,11 +126,10 @@ const loginUser = WrapAsync(async (req: Request, res: Response) => {
 });
 
 const logoutUser = WrapAsync(async (req: Request, res: Response) => {
- 
-  if(!req.user){
-    throw new ApiError(401,"Unauthorized")
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized");
   }
- 
+
   const loggedOutUser = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -168,44 +167,6 @@ const getCurrentUser = WrapAsync(async (req: Request, res: Response) => {
       ),
     );
 });
-
-const verifyEmail = WrapAsync(async (req: Request, res: Response) => {
-  const { verificationToken } = req.params;
-  console.log(verificationToken);
-  if (!verificationToken) {
-    throw new ApiError(400, "Email verification token is missing");
-  }
-
-  let hashedToken = crypto
-    .createHash("sha256")
-    .update(verificationToken as string)
-    .digest("hex");
-
-  const user = await User.findOne({
-    emailVerificationToken: hashedToken,
-    emailVerificationExpiry: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    throw new ApiError(400, "Email verification token is invalid");
-  }
-
-  user.emailVerificationToken = undefined;
-  user.emailVerificationExpiry = undefined;
-
-  user.isEmailVerified = true;
-  await user.save({ validateBeforeSave: false });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { isEmailVerified: true }, "Email is verified"));
-});
-
-const resendEmailVerification = WrapAsync(
-  async (req: Request, res: Response) => {
-    const { verificationToken } = req.body;
-  },
-);
 
 const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
   const incomingRefreshToken =
@@ -259,7 +220,79 @@ const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
     );
 });
 
-const forgotPassword = WrapAsync(async (req: Request, res: Response) => {
+const verifyEmail = WrapAsync(async (req: Request, res: Response) => {
+  const { verificationToken } = req.params;
+
+  if (!verificationToken) {
+    throw new ApiError(400, "Email verification token is missing");
+  }
+
+  let hashedToken = crypto
+    .createHash("sha256")
+    .update(verificationToken as string)
+    .digest("hex");
+
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new ApiError(400, "Email verification token is invalid");
+  }
+
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpiry = undefined;
+
+  user.isEmailVerified = true;
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { isEmailVerified: true }, "Email is verified"));
+});
+
+const resendEmailVerification = WrapAsync(
+  async (req: Request, res: Response) => {
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (user.isEmailVerified === true) {
+      throw new ApiError(409, `${user.email} is already verified`);
+    }
+
+    const { unHashedToken, hashedToken, tokenExpiry } =
+      user.generateTemporaryToken();
+
+    user.emailVerificationToken = hashedToken;
+    user.emailVerificationExpiry = tokenExpiry;
+
+    await user.save({ validateBeforeSave: false });
+
+    await sendEmail({
+      email: user.email,
+      emailType: "verify",
+      subject: "Verify your email",
+      username: user.username,
+      verificationUrl: `${process.env.FRONTEND_URL}/verify-email/${unHashedToken}`,
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {},
+          "Verification link has been sent to your email id",
+        ),
+      );
+  },
+);
+
+const forgotPasswordRequest = WrapAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
 
   if (!email) {
@@ -278,7 +311,105 @@ const forgotPassword = WrapAsync(async (req: Request, res: Response) => {
   user.forgotPasswordToken = hashedToken;
   user.forgotPasswordTokenExpiry = tokenExpiry;
 
-  // send mail
+  await user.save({ validateBeforeSave: false });
+
+  await sendEmail({
+    username: user.username,
+    email: user.email,
+    emailType: "forgotPassword",
+    subject: "Reset your password",
+    verificationUrl: `${process.env.FRONTEND_URL}/reset-password/${unHashedToken}`,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        {},
+        "Password reset link has been sent on your registered email",
+      ),
+    );
+});
+
+const resetForgotPassword = WrapAsync(async (req: Request, res: Response) => {
+  const { resetPasswordToken } = req.params;
+  const { newPassword, confirmPassword } = req.body;
+
+  if (!resetPasswordToken) {
+    throw new ApiError(400, "Invalid request");
+  }
+
+  const hashedResetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetPasswordToken as string)
+    .digest("hex");
+
+  const user = await User.findOne({
+    forgotPasswordToken: hashedResetPasswordToken,
+    forgotPasswordTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "New password and confirm password donot match");
+  }
+
+  const isDuplicate = await user.isPasswordCorrect(newPassword);
+  if (isDuplicate) {
+    throw new ApiError(400, "New password must be different from old one");
+  }
+
+  user.password = newPassword;
+
+  await user.save({ validateBeforeSave: false });
+
+  user.forgotPasswordToken = undefined;
+  user.forgotPasswordTokenExpiry = undefined;
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password has been updated successfully"));
+});
+
+const changePassword = WrapAsync(async (req: Request, res: Response) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  const user = await User.findById(req.user?._id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const isPasswordValid = user.isPasswordCorrect(currentPassword);
+
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Current password is not valid");
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "New password and confirm password don't match");
+  }
+
+  const isDuplicate = await user.isPasswordCorrect(newPassword);
+
+  if (isDuplicate) {
+    throw new ApiError(
+      400,
+      "New password must be different from the previous ones",
+    );
+  }
+
+  user.password = newPassword;
+
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password updated successfully"));
 });
 
 export {
@@ -288,4 +419,8 @@ export {
   getCurrentUser,
   refreshAccessToken,
   verifyEmail,
+  resendEmailVerification,
+  forgotPasswordRequest,
+  resetForgotPassword,
+  changePassword,
 };
