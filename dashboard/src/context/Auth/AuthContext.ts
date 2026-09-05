@@ -6,12 +6,11 @@ interface AuthContextType {
   loading: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>({
-  currentUser: null,
-  loading: false,
-});
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);
 
-export function useAuth() {
+export function UseAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {

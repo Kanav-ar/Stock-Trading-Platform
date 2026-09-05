@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
 import { api } from "../../api/axios";
+import { AuthContext } from "./AuthContext";
 import type { IUser } from "../../types/user.type";
 
 interface AuthContextProviderProps {
@@ -10,17 +10,16 @@ interface AuthContextProviderProps {
 export default function AuthContextProvider({
   children,
 }: AuthContextProviderProps) {
-  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+  const [currentUser, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const response = await api.get("/me");
-        console.log(response.data)
-        setCurrentUser(response.data.data.user);
+        const response = await api.get("/users/me");
+        setUser(response.data.data.user);
       } catch (error) {
-        setCurrentUser(null);
+        setUser(null);
       } finally {
         setLoading(false);
       }

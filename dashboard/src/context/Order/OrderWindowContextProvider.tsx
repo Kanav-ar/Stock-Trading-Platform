@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { OrderWindowContext } from "./OrderWindowContext";
 import OrderWindow from "../../components/OrderWindow";
-import type { OrderDetails } from "../../../types/order";
+import type { OrderDetails } from "../../types/order";
 
 interface OrderWindowContextProviderProps {
   children: ReactNode;
