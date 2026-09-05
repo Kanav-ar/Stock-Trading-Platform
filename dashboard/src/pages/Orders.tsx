@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
-import { useOrderStore } from "../store/orderStore";
+import { useOrderStore } from "../store/orders.store";
 import { api } from "../api/axios";
 
 export default function Orders() {

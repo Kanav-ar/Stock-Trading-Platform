@@ -10,7 +10,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
 );
 
-export function UseAuth() {
+export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {

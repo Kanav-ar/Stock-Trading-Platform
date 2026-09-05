@@ -2,6 +2,7 @@ import { NavLink } from "react-router";
 import { Moon, Sun } from "lucide-react";
 import kiteLogoImg from "../assets/kitelogo.png";
 import useTheme from "../context/Theme/themeContext";
+import { useAuth } from "../context/Auth/AuthContext";
 
 const menuItems = [
   "Dashboard",
@@ -14,7 +15,7 @@ const menuItems = [
 
 export default function Menu() {
   const { theme, toggleTheme } = useTheme();
-  
+  const {currentUser} = useAuth()
   return (
     <div className="flex h-full basis-[68%] items-center justify-between px-5 py-[10px]">
       <img src={kiteLogoImg} alt="logo" className="w-[50px]" />
@@ -43,12 +44,12 @@ export default function Menu() {
           <hr className="h-[30px] border-l border-[#f3f2f2]" />
 
           <div className="ml-5 flex cursor-pointer items-center justify-evenly group">
-            <div className="mr-2 flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[rgb(252,229,252)] text-[0.7rem] font-normal text-[rgb(221,139,221)]">
-              ZU
+            <div className="mr-2 flex h-[30px] w-[30px] items-center justify-center rounded-full bg-blue-200 font-semibold text-[rgb(0, 6, 42)]">
+              {currentUser?.username?.[0]}
             </div>
 
-            <p className="text-[0.8rem] font-light text-[#464646] dark:text-white transition-colors group-hover:text-[#df5b2b]">
-              USERID
+            <p className="font-semibold text-[#464646] dark:text-gray-200 transition-colors group-hover:text-[#df5b2b]">
+              {currentUser?.username}
             </p>
           </div>
           <div className="flex items-center md:space-x-8 lg:space-x-10 space-x-4 lg:px-12 px-4">

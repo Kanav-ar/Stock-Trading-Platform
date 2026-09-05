@@ -19,7 +19,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
 
   addOrder: (newOrder) => {
     set((state) => ({
-      allOrders: [...state.allOrders, newOrder],
+      allOrders: [ newOrder,...state.allOrders],
     }));
   },
 }));
