@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { api } from "../api/axios";
 import PasswordInput from "../components/signupAndLogin/PasswordInput";
 import Input from "../components/signupAndLogin/Input";
 import AuthCard from "../components/signupAndLogin/AuthCard";
 import AuthHeader from "../components/signupAndLogin/AuthHeader";
 import axios from "axios";
-import {X } from "lucide-react";
+import { X } from "lucide-react";
 
-
-export default function Signup() {
+export default function Login() {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,8 +27,8 @@ export default function Signup() {
     setError(null);
 
     try {
-     await api.post("/users/login", formData);
-    
+      await api.post("/login", formData);
+      navigate("/");
       setFormData({ identifier: "", password: "" });
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -55,8 +55,9 @@ export default function Signup() {
               {error && (
                 <p className="text-red-500 flex items-center gap-6">
                   {error}{" "}
-                  
-                  <button type="button" className="hover:bg-red-500/30 cursor-pointer rounded-lg"
+                  <button
+                    type="button"
+                    className="hover:bg-red-500/30 cursor-pointer rounded-lg"
                     onClick={() => {
                       setError(null);
                     }}

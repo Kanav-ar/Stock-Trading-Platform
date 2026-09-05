@@ -19,7 +19,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 const userRouter = Router();
 
 userRouter
-  .route("/register")
+  .route("/signup")
   .post(validate(registerValidationSchema), registerUser);
 
 userRouter.route("/login").post(validate(loginValidationSchema), loginUser);

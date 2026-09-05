@@ -2,6 +2,7 @@ import logo from "../../../assets/logo.svg";
 import { Link, NavLink } from "react-router";
 import ThemeBtn from "../../common/ThemeBtn";
 import Dropdown from "./Dropdown";
+import { useAuth } from "../../../context/Auth/AuthContext";
 
 export default function Navbar() {
   return (
@@ -9,7 +10,10 @@ export default function Navbar() {
       <div className="flex-2 px-4 md:px-8 lg:px-16 xl:px-32">
         <Link to={"/"}>
           {" "}
-          <img src={logo} alt="logo" className="w-32.25" />
+          {/* <img src={logo} alt="logo" className="w-32.25" /> */}
+          <h1 className="text-4xl font-bold text-[#387ed1]">
+        TradeX
+      </h1>
         </Link>
       </div>
       <div

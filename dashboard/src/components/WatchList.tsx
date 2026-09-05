@@ -7,13 +7,13 @@ import { api } from "../api/axios";
 
 const WatchList = () => {
 
-  useEffect(() => {
-    (async() => {
-      const data = await api("/watchlist")
+  // useEffect(() => {
+  //   (async() => {
+  //     const data = await api("/watchlist")
 
-      console.log("frontend\n",data)
-    })()
-  },[])
+  //     console.log("frontend\n",data)
+  //   })()
+  // },[])
 
 
   return (
