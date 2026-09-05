@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { OrderDetails } from "../types/order";
+import type { OrderDetails } from "../types/order.types";
 import { useOrderStore } from "../store/orders.store";
 import { api } from "../api/axios";
 
