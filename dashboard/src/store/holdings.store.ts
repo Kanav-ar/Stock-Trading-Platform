@@ -6,7 +6,7 @@ interface HoldingStore {
   setAllHoldings: (holdings: Holding[]) => void;
 }
 
-export const HoldingStore = create<HoldingStore>((set) => ({
+export const useHoldingStore = create<HoldingStore>((set) => ({
   allHoldings: [],
 
   setAllHoldings: (holdings) => {
