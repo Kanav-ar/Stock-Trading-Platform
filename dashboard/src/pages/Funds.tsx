@@ -1,6 +1,24 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
+import { getFunds } from "../api/funds.api";
+import { useFundsStore } from "../store/funds.store";
 
 const Funds = () => {
+  const { funds, setFunds } = useFundsStore();
+
+  useEffect(() => {
+    const fetchFunds = async () => {
+      try {
+        const fundsData = await getFunds();
+        setFunds(fundsData);
+      } catch (error) {
+        console.error("Failed to fetch funds:", error);
+      }
+    };
+
+    fetchFunds();
+  }, [setFunds]);
+
   return (
     <>
       <div className="flex flex-col items-center justify-between gap-4 rounded-md md:flex-row">
@@ -9,19 +27,13 @@ const Funds = () => {
         </p>
 
         <div className="flex flex-wrap justify-center gap-2">
-          <Link
-            to=""
-            className="rounded-sm bg-green-500 px-5 py-2 text-white hover:bg-green-400"
-          >
+          <button className="rounded-sm bg-green-500 px-5 py-2 text-white hover:bg-green-400">
             Add funds
-          </Link>
+          </button>
 
-          <Link
-            to=""
-            className="rounded-sm bg-blue-500 px-5 py-2 text-white hover:bg-blue-400"
-          >
+          <button className="rounded-sm bg-blue-500 px-5 py-2 text-white hover:bg-blue-400">
             Withdraw
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -40,7 +52,9 @@ const Funds = () => {
               </p>
 
               <p className="text-2xl text-blue-500 dark:text-blue-400">
-                4,043.10
+                {(funds ? funds.availableCash - funds.usedMargin : 0).toFixed(
+                  2,
+                )}{" "}
               </p>
             </div>
 
@@ -50,7 +64,7 @@ const Funds = () => {
               </p>
 
               <p className="text-2xl text-gray-800 dark:text-gray-200">
-                3,757.30
+                {funds?.usedMargin.toFixed(2) ?? "0.00"}{" "}
               </p>
             </div>
 
@@ -60,16 +74,15 @@ const Funds = () => {
               </p>
 
               <p className="text-2xl text-gray-800 dark:text-gray-200">
-                4,043.10
+                {funds?.availableCash.toFixed(2) ?? "0.00"}{" "}
               </p>
             </div>
 
             <hr className="mb-[5%] h-px border-0 bg-gray-300 dark:bg-gray-700" />
 
             {[
-              ["Opening Balance", "4,043.10"],
-              ["Opening Balance", "3736.40"],
-              ["Payin", "4064.00"],
+              ["Opening Balance", funds?.openingBalance.toFixed(2) ?? "0.00"],
+              ["Payin", funds?.payin.toFixed(2) ?? "0.00"],
               ["SPAN", "0.00"],
               ["Delivery margin", "0.00"],
               ["Exposure", "0.00"],
@@ -107,8 +120,7 @@ const Funds = () => {
             ))}
           </div>
         </div>
-
-        
+        {/* 
         <div className="w-full lg:basis-[48%]">
           <div className="flex flex-col items-center px-[8%] py-[8%] text-center lg:py-[2%]">
             <p className="mb-[10%] text-gray-300 dark:text-gray-500">
@@ -122,7 +134,7 @@ const Funds = () => {
               Open Account
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
