@@ -1,9 +1,12 @@
+import { useAuth } from "../context/Auth/AuthContext";
+
 const Summary = () => {
+  const {currentUser} = useAuth();
   return (
     <>
       <div>
         <h6 className="mb-[20px] text-[1.5rem] font-normal text-[rgb(83,83,83)] dark:text-gray-100">
-          Hi, User!
+          Hi, {currentUser?.fullname}!
         </h6>
 
         <SectionLine />

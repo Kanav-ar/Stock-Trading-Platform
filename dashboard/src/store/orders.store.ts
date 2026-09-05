@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Order } from "../../types/order";
+import type { Order } from "../types/order";
 
 
 interface OrderStore {
@@ -19,7 +19,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
 
   addOrder: (newOrder) => {
     set((state) => ({
-      allOrders: [...state.allOrders, newOrder],
+      allOrders: [ newOrder,...state.allOrders],
     }));
   },
 }));

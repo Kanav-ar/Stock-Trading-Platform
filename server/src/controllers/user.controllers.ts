@@ -23,11 +23,11 @@ const registerUser = WrapAsync(async (req: Request, res: Response) => {
 
   if (existingUser) {
     if (existingUser.username === username) {
-      throw new ApiError(409, "Username already exists");
+      throw new ApiError(409, "Username already exist");
     }
 
     if (existingUser.email === email) {
-      throw new ApiError(409, "Email already exists");
+      throw new ApiError(409, "Email already exist");
     }
   }
 
@@ -83,9 +83,14 @@ const registerUser = WrapAsync(async (req: Request, res: Response) => {
 });
 
 const loginUser = WrapAsync(async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { identifier, password } = req.body;
 
-  const user = await User.findOne({ $or: [{ username }, { email }] });
+  const user = await User.findOne({
+    $or: [
+      { username: identifier.toLowerCase() },
+      { email: identifier.toLowerCase() },
+    ],
+  });
 
   if (!user) {
     throw new ApiError(404, "Invalid credentials");
@@ -109,7 +114,7 @@ const loginUser = WrapAsync(async (req: Request, res: Response) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
   };
 
   return res
@@ -185,9 +190,9 @@ const refreshAccessToken = WrapAsync(async (req: Request, res: Response) => {
   const validDecodedToken =
     refreshTokenPayloadSchema.safeParse(decodedRefreshToken);
 
-    if(!validDecodedToken.success){
-      throw new ApiError(403,"Invalid token")
-    }
+  if (!validDecodedToken.success) {
+    throw new ApiError(403, "Invalid token");
+  }
 
   const user = await User.findById(validDecodedToken.data?._id);
 
@@ -306,7 +311,10 @@ const forgotPasswordRequest = WrapAsync(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(404, "If an account exists for this email, a password reset link has been sent.");
+    throw new ApiError(
+      404,
+      "If an account exists for this email, a password reset link has been sent.",
+    );
   }
 
   const { unHashedToken, hashedToken, tokenExpiry } =
@@ -373,7 +381,6 @@ const resetForgotPassword = WrapAsync(async (req: Request, res: Response) => {
   user.forgotPasswordTokenExpiry = undefined;
 
   await user.save({ validateBeforeSave: false });
-
 
   return res
     .status(200)

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { OrderDetails } from "../../types/order";
-import { useOrderStore } from "../store/orderStore";
+import type { OrderDetails } from "../types/order";
+import { useOrderStore } from "../store/orders.store";
 import { api } from "../api/axios";
 
 interface OrderActionWindowProps extends OrderDetails {

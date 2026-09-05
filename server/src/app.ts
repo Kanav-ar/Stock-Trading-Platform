@@ -14,7 +14,8 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    origin: ["http://localhost:5173",
+      "http://localhost:5174"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -27,6 +28,7 @@ import holdingRouter from "./routes/holding.routes.ts";
 import positionRouter from "./routes/position.routes.ts";
 import orderRouter from "./routes/order.routes.ts";
 import fundRouter from "./routes/fund.routes.ts";
+import watchlistRouter from "./routes/watchlist.routes.ts";
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
@@ -34,15 +36,15 @@ app.use("/api/v1/holdings", holdingRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/positions", positionRouter);
 app.use("/api/v1/funds",fundRouter)
-app.use("/api/v1/watchlist", holdingRouter);
+app.use("/api/v1/watchlist", watchlistRouter);
 
 
 app.use(
   (
     err: Error,
-    req: Request,
+    _req: Request,
     res: Response,
-    next: NextFunction,
+    _next: NextFunction,
   ) => {
     if (err instanceof ApiError) {
       return res.status(err.statusCode).json({

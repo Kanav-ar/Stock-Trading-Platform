@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
-import { Fund } from "../../models/funds.model";
 import ApiError from "../../utils/ApiError";
+import { Fund } from "../../models/funds.model";
 import { Holding } from "../../models/holdings.model";
 import { Position } from "../../models/positions.model";
 import { Order } from "../../models/orders.model";
@@ -58,6 +58,7 @@ export const executeBuyOrder = async ({
     }
 
     await funds.save({ session });
+    
 
     if (product === "CNC") {
       const existingHolding = await Holding.findOne({

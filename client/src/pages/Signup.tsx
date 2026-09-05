@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { api } from "../api/axios";
 import PasswordInput from "../components/signupAndLogin/PasswordInput";
 import Input from "../components/signupAndLogin/Input";
@@ -10,12 +10,14 @@ import axios from "axios";
 import { X } from "lucide-react";
 
 export default function Signup() {
+   const navigate = useNavigate();
   const [terms, setTerms] = useState(false);
-  const [error, setError] = useState<string|null>("");
+  const [error, setError] = useState<string|null>(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    fullname:"",
     password: "",
   });
 
@@ -29,12 +31,14 @@ export default function Signup() {
     setError(null);
 
     try {
-      const response = await api.post("/users/signup", formData);
+      const response = await api.post("/signup", formData);
+
       if (!response.data) {
-        setError("Unable to load profile");
+        setError("Unable to create account");
         return;
       }
-      setFormData({ username: "", email: "", password: "" });
+      navigate("/");
+      setFormData({ username: "", email: "", fullname:"", password: "" });
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message ?? "Something went wrong");
@@ -87,6 +91,14 @@ export default function Signup() {
                 type="email"
                 placeholder="you@example.com"
                 value={formData.email}
+                onChange={handleFormData}
+              />
+              <Input
+                label="Full name"
+                name="fullname"
+                type="text"
+                placeholder="you@example.com"
+                value={formData.fullname}
                 onChange={handleFormData}
               />
               <PasswordInput
